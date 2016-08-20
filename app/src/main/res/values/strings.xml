@@ -1,3 +1,23 @@
 <resources>
-    <string name="app_name">Jandan</string>
+
+    <!--DEBUG_KEYS-->
+    <string name="isDeveloping">true</string>
+    <string name="wxapp_id">e1cb249bad938f6c739fff459a721d59</string>
+
+
+    <!--RELEASE_KEYS-->
+    <!--<string name="isDeveloping">false</string>-->
+    <!--<string name="wxapp_id">194f40a28641ff880d54f2c20687f3b8</string>-->
+
+
+    <string name="app_name">煎蛋</string>
+    <string name="img_cahce">Jandan/cache</string>
+
+    <string name="picture_saved">图片已保存</string>
+    <string name="picture_save_failed">图片保存失败</string>
+    <string name="loading">正在加载</string>
+    <string name="click_to_load_more">点击加载</string>
+    <string name="no_more">没有更多</string>
+
+
 </resources>

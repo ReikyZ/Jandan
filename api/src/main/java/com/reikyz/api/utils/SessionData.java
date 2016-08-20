@@ -11,6 +11,10 @@ public class SessionData {
         context = ctx;
     }
 
+    public static Context getContext() {
+        return context;
+    }
+
     //User Session相关信息
     public static boolean saveAccessToken(String token) {
         SharedPreferences preferences = context.getSharedPreferences(SESSION, Context.MODE_PRIVATE);
@@ -52,8 +56,15 @@ public class SessionData {
         return preferences.getInt("user_id", -1);
     }
 
-    public static Context getContext() {
-        return context;
+    public static boolean saveCookie(String cookie) {
+        SharedPreferences preferences = context.getSharedPreferences(SESSION, Context.MODE_PRIVATE);
+        return preferences.edit().putString("cookie", cookie).commit();
     }
+
+    public static String getCookie() {
+        SharedPreferences preferences = context.getSharedPreferences(SESSION, Context.MODE_PRIVATE);
+        return preferences.getString("cookie", "");
+    }
+
 
 }

@@ -2,4 +2,80 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+
+    <dimen name="min_margin">5dp</dimen>
+    <dimen name="m_mid_margin">8dp</dimen>
+    <dimen name="mid_margin">10dp</dimen>
+    <dimen name="max_margin">15dp</dimen>
+    <dimen name="icon_size">20dp</dimen>
+    <dimen name="rect_btn_height">60dp</dimen>
+    <dimen name="avatar_size">55dp</dimen>
+    <dimen name="avatar_mid_size">40dp</dimen>
+    <dimen name="avatar_size_small">30dp</dimen>
+    <dimen name="avatar_size_large">110dp</dimen>
+    <dimen name="divider_line">0.5dp</dimen>
+    <dimen name="food_image_size">50dp</dimen>
+    <dimen name="edit_text_height">45dp</dimen>
+    <dimen name="progress_bar_size">35dp</dimen>
+
+    <!--shadow-->
+    <dimen name="default_corner_radius">4dp</dimen>
+    <dimen name="default_shadow_radius">4dp</dimen>
+
+    <!-- LoginOrRegisterActivity -->
+    <dimen name="view_margin">20dp</dimen>
+    <dimen name="btn_margin">30dp</dimen>
+    <dimen name="text_margin">40dp</dimen>
+    <dimen name="rg_margin">50dp</dimen>
+
+    <!--TextSize Dimens-->
+    <dimen name="xs_text_size">8sp</dimen>
+    <dimen name="ls_text_size">14sp</dimen>
+    <dimen name="ss_text_size">10sp</dimen>
+    <dimen name="ms_text_size">12sp</dimen>
+    <dimen name="s_text_size">14sp</dimen>
+    <dimen name="sm_text_size">16sp</dimen>
+    <dimen name="nickname_size">17sp</dimen>
+    <dimen name="m_text_size">18sp</dimen>
+    <dimen name="l_text_size">22sp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="mm_text_size">18sp</dimen>
+    <dimen name="lm_text_size">20sp</dimen>
+    <dimen name="sl_text_size">22sp</dimen>
+    <dimen name="ml_text_size">24sp</dimen>
+    <dimen name="ll_text_size">26sp</dimen>
+    <dimen name="xl_text_size">28sp</dimen>
+    <dimen name="xxl_text_size">30sp</dimen>
+    <dimen name="xxxl_text_size">32sp</dimen>
+    <dimen name="large_time_text_size">36sp</dimen>
+    <dimen name="rb_height">30dp</dimen>
+    <dimen name="actionbar_height">40dp</dimen>
+    <dimen name="hexagon_height">25dp</dimen>
+    <dimen name="level_title_height">40dp</dimen>
+    <dimen name="small_avatar_dimen">20dp</dimen>
+    <dimen name="event_btn_dimen">40dp</dimen>
+    <dimen name="normal_avatar_dimen">50dp</dimen>
+    <dimen name="event_small_dimen">27dp</dimen>
+    <dimen name="icon_size_big">25dp</dimen>
+    <dimen name="checkbox_policy">17dp</dimen>
+    <dimen name="progress_corner">5dp</dimen>
+    <dimen name="small_icon_size">15dp</dimen>
+    <dimen name="star_size_small">15dp</dimen>
+    <dimen name="corner_progress_height">6dp</dimen>
+    <dimen name="star_size_big">40dp</dimen>
+    <dimen name="setting_margin_top">30dp</dimen>
+    <dimen name="star_size_mid">30dp</dimen>
+    <dimen name="hex_size_extra_big">80dp</dimen>
+    <dimen name="progress_corner_big">10dp</dimen>
+    <dimen name="small_level_size_height">17dp</dimen>
+    <dimen name="small_level_size_width">20dp</dimen>
+    <dimen name="small_event_btn">20dp</dimen>
+    <dimen name="mid_level_size_width">46dp</dimen>
+    <dimen name="mid_level_size_height">40dp</dimen>
+    <dimen name="big_level_size_height">63dp</dimen>
+    <dimen name="big_level_size_width">72dp</dimen>
+    <dimen name="mid_avatar_size">40dp</dimen>
+    <dimen name="actionbar_event_btn_size">27dp</dimen>
 </resources>

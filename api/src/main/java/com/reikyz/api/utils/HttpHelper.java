@@ -68,6 +68,6 @@ public class HttpHelper {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        return "ChiSha/" + version + " (" + Build.MODEL + "; Android " + Build.VERSION.RELEASE + "; " + "Scale/" + context.getResources().getDisplayMetrics().density + ")";
+        return "Jandan Android App V3.0.0.2";
     }
 }

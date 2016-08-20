@@ -1,7 +1,6 @@
 package com.reikyz.api.net;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v4.util.ArrayMap;
 import android.util.Log;
@@ -77,49 +76,13 @@ public class HttpClient {
     }
 
     /**
-     * 刷新Token
-     */
-    public static boolean isRefreshToken() throws IOException {
-
-        return true;
-//        boolean flag = true;
-//        if (!SessionData.getAccessToken().equals("")) {
-//            long currentTime = System.currentTimeMillis();
-//            long expireAtTime = HttpHelper.getLongFromTime(SessionData.getExpireAt());
-//            if (currentTime > expireAtTime) {
-//                Response response = client.newCall(postMethodRequest(BaseApiImpl.PERSON_SESSION,
-//                        ApiParams.refreshTokenParams(), true)).execute();
-//                int code = response.code();
-//                String message = response.body().string();
-//                if (HttpHelper.checkCodeEffect(code)) {
-//                    SessionData.saveTokenMessage(message);
-//                } else {
-//                    SessionData.clearTokenMessage();
-//                    flag = false;
-//                }
-//            }
-//        }
-//        return flag;
-    }
-
-    /**
      * 获取Request Get
      */
     public static Request getMethodRequest(String url, boolean isHeader) {
         Context context = SessionData.getContext();
         PackageManager packageManager = context.getPackageManager();
-        String version;
-        try {
-            PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-            version = packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            version = "5.1.1";
-        }
         if (isHeader && !SessionData.getAccessToken().isEmpty())
             return BaseBuilder(url)
-                    .addHeader("Access-Token", SessionData.getAccessToken())
-                    .addHeader("Client", "ChiSha/" + version)
-                    .addHeader("Screen-Scale", context.getResources().getDisplayMetrics().density + "")
                     .build();
         return BaseBuilder(url).build();
     }
@@ -130,44 +93,25 @@ public class HttpClient {
     public static Request postMethodRequest(String url, RequestBody body, boolean isHeader) {
         Context context = SessionData.getContext();
         PackageManager packageManager = context.getPackageManager();
-        String version;
-        try {
-            PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-            version = packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            version = "5.1.1";
-        }
-        if (isHeader && !SessionData.getAccessToken().isEmpty())
+        if (isHeader)
             return BaseBuilder(url).post(body)
-                    .addHeader("Access-Token", SessionData.getAccessToken())
-                    .addHeader("Client", "ChiSha/" + version)
-                    .addHeader("Screen-Scale", context.getResources().getDisplayMetrics().density + "")
+                    .addHeader("Cookie", SessionData.getCookie())
+                    .addHeader("Cookie2", "$Version=1")
                     .build();
-
         return BaseBuilder(url).post(body).build();
     }
 
     /**
-     * 获取Request Delete
+     * Post with Cookie
      */
-    public static Request deleteMethodRequest(String url, RequestBody body, boolean isHeader) {
-        Context context = SessionData.getContext();
-        PackageManager packageManager = context.getPackageManager();
-        String version;
-        try {
-            PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-            version = packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            version = "5.1.1";
-        }
-        if (isHeader && !SessionData.getAccessToken().isEmpty())
-            return BaseBuilder(url).delete(body)
-                    .addHeader("Access-Token", SessionData.getAccessToken())
-                    .addHeader("Client", "ChiSha/" + version)
-                    .addHeader("Screen-Scale", context.getResources().getDisplayMetrics().density + "")
-                    .build();
-        return BaseBuilder(url).delete(body).build();
+
+    public static Request postMethodWithCookieRequest(String url, RequestBody body, String cookie) {
+        return BaseBuilder(url).post(body)
+                .addHeader("Cookie", cookie)
+                .addHeader("Cookie2", "$Version=1")
+                .build();
     }
+
 
     private static Request.Builder BaseBuilder(String url) {
         return new Request.Builder().url(url).header("User-Agent", HttpHelper.userAgent());
@@ -179,20 +123,6 @@ public class HttpClient {
     public static Request downloadMethodRequest(String url) {
         Context context = SessionData.getContext();
         PackageManager packageManager = context.getPackageManager();
-        String version;
-        try {
-            PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-            version = packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            version = "5.1.1";
-        }
-        if (!SessionData.getAccessToken().isEmpty())
-            return BaseBuilder(url)
-                    .addHeader("Access-Token", SessionData.getAccessToken())
-                    .addHeader("Client", "ChiSha/" + version)
-                    .addHeader("Screen-Scale", context.getResources().getDisplayMetrics().density + "")
-                    .build();
-//        return BaseBuilder(url).delete(body).build();
         return BaseBuilder(url).build();
     }
 
@@ -205,10 +135,6 @@ public class HttpClient {
 
     public static Response post(String url, RequestBody body, boolean isHeader) throws IOException {
         return execute(postMethodRequest(url, body, isHeader), isHeader);
-    }
-
-    public static Response delete(String url, RequestBody body, boolean isHeader) throws IOException {
-        return execute(deleteMethodRequest(url, body, isHeader), isHeader);
     }
 
     public static Response getHtml(String url, boolean isHeader) throws IOException {
@@ -231,14 +157,9 @@ public class HttpClient {
         enqueue(postMethodRequest(url, requestBody, isHeader), callback);
     }
 
-    public static void deleteAsync(String url, RequestBody requestBody, boolean isHeader, Callback callback) {
-        enqueue(deleteMethodRequest(url, requestBody, isHeader), callback);
-    }
-
-
     /**
      * 下面是基础方法，需要特殊使用时自己组装
-     * <p/>
+     * <p>
      * 该不会开启异步线程。
      *
      * @param request
@@ -253,11 +174,7 @@ public class HttpClient {
                 return null;
             }
         } else {
-            if (isRefreshToken()) {
-                return client.newCall(request).execute();
-            } else {
-                return null;
-            }
+            return client.newCall(request).execute();
         }
     }
 
@@ -265,11 +182,7 @@ public class HttpClient {
         if (!isHeader) {
             return htmlClient.newCall(request).execute();
         } else {
-            if (isRefreshToken()) {
-                return htmlClient.newCall(request).execute();
-            } else {
-                return null;
-            }
+            return client.newCall(request).execute();
         }
     }
 
@@ -280,12 +193,7 @@ public class HttpClient {
      * @param responseCallback
      */
     public static void enqueue(Request request, Callback responseCallback) {
-        try {
-            if (isRefreshToken())
-                client.newCall(request).enqueue(responseCallback);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        client.newCall(request).enqueue(responseCallback);
     }
 
     /**
@@ -306,17 +214,6 @@ public class HttpClient {
 
             }
         });
-    }
-
-    public static String getStringFromServer(String url) throws IOException {
-        Request request = new Request.Builder().url(url).build();
-        Response response = execute(request, false);
-        if (response.isSuccessful()) {
-            String responseUrl = response.body().string();
-            return responseUrl;
-        } else {
-            throw new IOException("Unexpected code " + response);
-        }
     }
 
     /**

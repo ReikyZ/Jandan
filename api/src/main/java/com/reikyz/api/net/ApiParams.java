@@ -76,4 +76,18 @@ public class ApiParams {
     }
 
 
+    public static ArrayMap gerneralParams(String intent, String content, Integer page, String fields, Integer dev) {
+        ArrayMap<String, String> arrayMap = new ArrayMap<>();
+        if (intent != null)
+            arrayMap.put("oxwlxojflwblxbsapi", intent);
+        if (content != null)
+            arrayMap.put("include", content);
+        if (page != null)
+            arrayMap.put("page", page + "");
+        if (fields != null)
+            arrayMap.put("custom_fields", fields);
+        if (dev != null)
+            arrayMap.put("dev", dev + "");
+        return arrayMap;
+    }
 }
