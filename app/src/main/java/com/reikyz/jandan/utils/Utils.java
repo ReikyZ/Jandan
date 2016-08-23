@@ -21,6 +21,9 @@ import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewCompat;
 import android.telephony.TelephonyManager;
@@ -361,7 +364,7 @@ public class Utils {
 
     public static void log(String tag, String result) {
         if (MyApp.getContext().getString(R.string.isDeveloping).equals("true"))
-            Log.e(tag, "==sssss==" + result + "==" + getLineNumber(new Exception()));
+            Log.e(tag, "==sssss==" + result);
     }
 
     public static String getLineNumber(Exception e) {
@@ -684,5 +687,14 @@ public class Utils {
         return String.valueOf(System.currentTimeMillis() / 1000);
     }
 
+
+    public static void hideFragment(FragmentManager fm, FragmentTransaction fragmentTransaction) {
+        if (fm.getFragments() != null)
+            for (Fragment fragment : fm.getFragments()) {
+                if (fragment != null) {
+                    fragmentTransaction.hide(fragment);
+                }
+            }
+    }
 
 }

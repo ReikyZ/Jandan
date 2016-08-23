@@ -40,4 +40,6 @@ public class BaseFragment extends Fragment {
         super.onResume();
 //        AVAnalytics.onFragmentStart(TAG);
     }
+
+
 }

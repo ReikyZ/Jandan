@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/refreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <com.reikyz.jandan.widget.LMListView
+            android:id="@+id/lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:divider="@color/shadow_grey"
+            android:dividerHeight="@dimen/divider_line"
+            android:footerDividersEnabled="false"
+            android:listSelector="@drawable/bg_list_item" />
+
+    </LinearLayout>
+
+
+</android.support.v4.widget.SwipeRefreshLayout>

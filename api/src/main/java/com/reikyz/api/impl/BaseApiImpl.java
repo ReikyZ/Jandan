@@ -8,7 +8,7 @@ public class BaseApiImpl {
     protected static String HOST_JANDAN = "http://i.jandan.net";
 
 
-    protected static String GENERAL_API = HOST_JANDAN + "/";
+    protected static String GERNERAL_API = HOST_JANDAN + "/";
 
 
 }

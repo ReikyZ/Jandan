@@ -12,11 +12,11 @@ public class ApiImpl extends BaseApiImpl {
 
     ResponseParse paser = new ResponseParse();
 
-    public ApiResponse getNews(String intent, String content, int page, String fields, int dev) throws IOException {
+    public ApiResponse generalApi(String intent, String include, Integer page, String fields, Integer dev,Integer id) throws IOException {
         return paser.parse(HttpClient.get(
                 HttpClient.attachHttpGetParams(
-                        GENERAL_API,
-                        ApiParams.gerneralParams(intent, content, page, fields, dev))
+                        GERNERAL_API,
+                        ApiParams.gerneralParams(intent, include, page, fields, dev, id))
                 , false));
     }
 

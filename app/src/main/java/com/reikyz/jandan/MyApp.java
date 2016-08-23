@@ -13,12 +13,15 @@ import com.reikyz.api.impl.ApiImpl;
 import com.reikyz.api.model.ApiResponse;
 import com.reikyz.api.utils.SessionData;
 import com.reikyz.jandan.async.ResponseSimpleNetTask;
+import com.reikyz.jandan.model.NewsModel;
 import com.reikyz.jandan.utils.BitmapUtils;
 import com.reikyz.jandan.utils.Utils;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import io.fabric.sdk.android.Fabric;
@@ -34,6 +37,10 @@ public class MyApp extends Application {
     static Activity currentActivity;
     public static IWXAPI iwxapi;
     protected ApiImpl api;
+
+    //DATA
+    public static Integer currentIndex;
+    public static List<NewsModel> newsList = new ArrayList<>();
 
     public synchronized static MyApp getInstance() {
         if (instance == null) {
@@ -56,23 +63,24 @@ public class MyApp extends Application {
 
         MultiDex.install(context);
 
-        testApi();
+//        testApi();
     }
 
     private void testApi() {
         new ResponseSimpleNetTask(this, false) {
             @Override
             protected ApiResponse doInBack() throws Exception {
-                return api.entry("get_recent_posts",
+                return api.generalApi("get_recent_posts",
                         "url,date,tags,author,title,comment_count,custom_fields",
                         1,
                         "thumb_c,views",
-                        1);
+                        1,
+                        null);
             }
 
             @Override
             protected void onSucceed(String result) throws Exception {
-                Utils.log(TAG, "onSucceed");
+                Utils.log(TAG, "onSucceed" + "==" + Utils.getLineNumber(new Exception()));
             }
 
             @Override
