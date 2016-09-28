@@ -100,7 +100,6 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
 
                 results = Prefs.getString(Config.PRELOAD_FUN_PIC);
                 if (results != null) {
-                    Utils.log(TAG, results.substring(780, 800));
                     List<GeneralPostModel> tmpNewsList = JSON.parseArray(results, GeneralPostModel.class);
                     adapter.refreshItems(tmpNewsList, getMore);
                 }

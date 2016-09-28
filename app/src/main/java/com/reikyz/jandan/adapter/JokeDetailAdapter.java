@@ -25,13 +25,14 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
- * Created by reikyZ on 16/9/6.
+ * Created by reikyZ on 16/9/29.
  */
-public class PicDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
 
-    final String TAG = "==PicDetailAdapter==";
+public class JokeDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
 
-    final static int ITEM_PIC = 0x00;
+    final String TAG = "==JokeDetailAdapter==";
+
+    final static int ITEM_JOKE = 0x00;
     final static int ITEM_DESCRIP = 0x01;
     final static int ITEM_HOT_TITLE = 0x02;
     final static int ITEM_TITLE = 0x03;
@@ -45,7 +46,7 @@ public class PicDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
         this.mHotPost = mHotPost;
     }
 
-    public PicDetailAdapter(Context context, List<DuoshuoCommentModel> models, GeneralPostModel postModel) {
+    public JokeDetailAdapter(Context context, List<DuoshuoCommentModel> models, GeneralPostModel postModel) {
         super(context, models);
         mContext = context;
         mPostModel = postModel;
@@ -55,35 +56,37 @@ public class PicDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
     @Override
     public int getCount() {
         if (mHotPost.size() > 0) {
-            return mPostModel.getPics().size() + 1 + 1 + mHotPost.size() + 1 + models.size();
+            return 1 + 1 + 1 + mHotPost.size() + 1 + models.size();
         } else {
-            return mPostModel.getPics().size()  + 1 + 1 + models.size();
+            return 1 + 1 + 1 + models.size();
         }
     }
+
 
     @Override
     public int getViewTypeCount() {
         return 6;
     }
 
+
     @Override
     public int getItemViewType(int position) {
-        if (position < mPostModel.getPics().size()) {
-            return ITEM_PIC;
-        } else if (position == mPostModel.getPics().size()) {
+        if (position < 1) {
+            return ITEM_JOKE;
+        } else if (position == 1) {
             return ITEM_DESCRIP;
-        } else if (position > mPostModel.getPics().size()) {
+        } else if (position > 1) {
             if (mHotPost.size() > 0) {
-                if (position == mPostModel.getPics().size() + 1) {
+                if (position == 1 + 1) {
                     return ITEM_HOT_TITLE;
-                } else if (position == mPostModel.getPics().size() + 1 + mHotPost.size() + 1) {
+                } else if (position == 1 + 1 + mHotPost.size() + 1) {
                     return ITEM_TITLE;
                 } else {
                     return ITEM_COMMENT;
                 }
 
             } else {
-                if (position > mPostModel.getPics().size() + 1) {
+                if (position > 1 + 1) {
                     return ITEM_COMMENT;
                 } else {
                     return ITEM_TITLE;
@@ -97,38 +100,31 @@ public class PicDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         BaseViewHolder holder = null;
         switch (getItemViewType(position)) {
-            case ITEM_PIC:
+            case ITEM_JOKE:
                 holder = BaseViewHolder.getViewHolder(
                         context,
                         convertView,
                         parent,
-                        R.layout.item_pic,
+                        R.layout.item_joke_detail,
                         position
                 );
-                ImageView ivPic = holder.getView(R.id.iv_pic);
-                CircleProgressBar progressBar = holder.getView(R.id.proBar);
-                progressBar.setColorSchemeResources(R.color.red, R.color.yellow, R.color.blue);
 
+                final TextView tvJokeContent = holder.getView(R.id.tv_joke_content);
+                ImageView ivJokePic = holder.getView(R.id.iv_joke_pic);
+                final ImageView ivMask = holder.getView(R.id.iv_mask);
 
-                ivPic.setImageDrawable(null);
-                if (mPostModel.getPics().get(position).indexOf(".gif") > 0) {
-                    Utils.log(TAG, "show GIF" + Utils.getLineNumber(new Exception()));
-                    BitmapUtils.playGif(context, mPostModel.getPics().get(position), ivPic);
-                    ivPic.setOnClickListener(null);
+                if (!TextUtils.isEmpty(mPostModel.getText_content())) {
+                    tvJokeContent.setVisibility(View.VISIBLE);
+                    tvJokeContent.setText(mPostModel.getText_content());
+                } else tvJokeContent.setVisibility(View.GONE);
+
+                if (mPostModel.getComment_content().indexOf("img src") > 0) {
+                    ivJokePic.setVisibility(View.VISIBLE);
+                    String picUrl = mPostModel.getComment_content().replace(mPostModel.getText_content(), "").trim().replace("<img src=\"", "").replace("\" />", "");
+//            BitmapUtils.displayImage(picUrl, ivJokePic);
+                    BitmapUtils.showJpg(context, picUrl, ivJokePic);
                 } else {
-                    Utils.log(TAG, "show JPG" + Utils.getLineNumber(new Exception()));
-                    BitmapUtils.showJpg(context, mPostModel.getPics().get(position), ivPic);
-                    ivPic.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(context, ShowPicActivity.class);
-                            intent.putExtra(Config.PIC_URL, mPostModel.getPics().get(position));
-                            context.startActivity(intent);
-                            ((Activity) context).overridePendingTransition(
-                                    R.anim.activity_horizonal_entry,
-                                    R.anim.activity_half_horizonal_exit);
-                        }
-                    });
+                    ivJokePic.setVisibility(View.GONE);
                 }
                 break;
             case ITEM_DESCRIP:
@@ -142,12 +138,7 @@ public class PicDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
                 TextView tvText = holder.getView(R.id.tv_text);
                 TextView tvPostTime = holder.getView(R.id.tv_post_time);
 
-                if (!TextUtils.isEmpty(mPostModel.getText_content())) {
-                    tvText.setVisibility(View.VISIBLE);
-                    tvText.setText(mPostModel.getText_content().trim());
-                } else {
-                    tvText.setVisibility(View.GONE);
-                }
+                tvText.setVisibility(View.GONE);
 
                 TextView tvAuthor = holder.getView(R.id.tv_author);
                 if (!TextUtils.isEmpty(mPostModel.getComment_author())) {
@@ -202,13 +193,13 @@ public class PicDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
 
                 DuoshuoCommentModel commentModel;
                 if (mHotPost.size() == 0) {
-                    commentModel = models.get(position - 2 - mPostModel.getPics().size());
+                    commentModel = models.get(position - 2 - 1);
                 } else {
-                    if (position <= mPostModel.getPics().size() + 2 + mHotPost.size()) {
-                        int index = position - mPostModel.getPics().size() - 2;
+                    if (position <= 1 + 2 + mHotPost.size()) {
+                        int index = position - 1 - 2;
                         commentModel = getCommentByID(mHotPost.get(index));
                     } else {
-                        commentModel = models.get(position - mPostModel.getPics().size() - 3 - mHotPost.size());
+                        commentModel = models.get(position - 1 - 3 - mHotPost.size());
                     }
                 }
 

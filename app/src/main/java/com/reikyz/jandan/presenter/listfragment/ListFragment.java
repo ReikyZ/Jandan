@@ -197,7 +197,8 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
 
             @Override
             protected void onFailure() {
-                Utils.showToast(getActivity(), "网络不好,稍后再试");
+                getNews(page);
+//                Utils.showToast(getActivity(), "网络不好,稍后再试");
             }
         }.execute();
     }
@@ -234,7 +235,8 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
 
             @Override
             protected void onFailure() {
-                Utils.showToast(getActivity(), "网络不好,稍后再试");
+                getJoke(page);
+//                Utils.showToast(getActivity(), "网络不好,稍后再试");
             }
         }.execute();
     }
@@ -284,7 +286,8 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
 
             @Override
             protected void onFailure() {
-                Utils.showToast(getActivity(), "网络不好,稍后再试");
+                getComment(threads);
+//                Utils.showToast(getActivity(), "网络不好,稍后再试");
             }
         }.execute();
     }

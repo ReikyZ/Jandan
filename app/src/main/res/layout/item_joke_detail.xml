@@ -1,0 +1,36 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/mid_margin"
+    android:background="@color/white">
+
+
+    <ImageView
+        android:id="@+id/iv_joke_pic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_pic_content"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/blank_vertical" />
+
+    <TextView
+        android:id="@+id/tv_joke_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_joke_pic"
+        android:letterSpacing="0.08"
+        android:lineSpacingExtra="1.5dp"
+        android:padding="@dimen/mid_margin"
+        android:text="hhhhh"
+        android:textColor="@color/strong_grey"
+        android:textSize="@dimen/sm_text_size" />
+
+    <ImageView
+        android:id="@+id/iv_mask"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@+id/tv_joke_content"
+        android:background="@drawable/shadow_grident"
+        android:visibility="gone" />
+
+</RelativeLayout>

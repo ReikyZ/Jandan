@@ -100,7 +100,6 @@ public class PicCardView extends LinearLayout {
 
     public void showCard(final GeneralPostModel picModel, final Integer position, final String type) {
         mPicModel = picModel;
-        Utils.log(TAG, picModel.toString() + Utils.getLineNumber(new Exception()));
 
         llPic.setOnClickListener(new OnClickListener() {
             @Override

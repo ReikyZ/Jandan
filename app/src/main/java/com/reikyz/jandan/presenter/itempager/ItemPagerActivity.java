@@ -11,6 +11,7 @@ import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.presenter.BaseActivity;
+import com.reikyz.jandan.presenter.jokefragment.JokeFragment;
 import com.reikyz.jandan.presenter.newsdetailfragment.WebPageFragment;
 import com.reikyz.jandan.presenter.picfragment.PicFragment;
 import com.reikyz.jandan.utils.Utils;
@@ -51,9 +52,7 @@ public class ItemPagerActivity extends BaseActivity {
                     case Config.NEWS:
                         return WebPageFragment.newInstance(mType, position);
                     case Config.JOKE:
-
-
-                        return null;
+                        return JokeFragment.newInstance(position);
                     case Config.FUN_PIC:
                     case Config.GIRL_PIC:
                         return PicFragment.newInstance(mType, position);
@@ -97,26 +96,26 @@ public class ItemPagerActivity extends BaseActivity {
                 switch (mType) {
                     case Config.NEWS:
                         MyApp.currentNewsIndex = position;
-                        if (MyApp.newsList.size() - position < 2) {
+                        if (MyApp.newsList.size() - position < 5) {
                             EventBus.getDefault().post(0, EventConfig.LOAD_MORE_LIST);
                         }
                         break;
                     case Config.JOKE:
                         MyApp.currentJokeIndex = position;
-                        if (MyApp.jokeList.size() - position < 2) {
+                        if (MyApp.jokeList.size() - position < 5) {
                             EventBus.getDefault().post(0, EventConfig.LOAD_MORE_LIST);
                         }
                         break;
                     case Config.FUN_PIC:
                         MyApp.currentFunPicIndex = position;
-                        if (MyApp.funPicList.size() - position < 2) {
+                        if (MyApp.funPicList.size() - position < 5) {
                             Utils.log(TAG, Utils.getLineNumber(new Exception()));
                             EventBus.getDefault().post(0, EventConfig.LOAD_MORE_FLOW);
                         }
                         break;
                     case Config.GIRL_PIC:
                         MyApp.currentGirlPicIndex = position;
-                        if (MyApp.girlPicLIst.size() - position < 2) {
+                        if (MyApp.girlPicLIst.size() - position < 5) {
                             EventBus.getDefault().post(0, EventConfig.LOAD_MORE_FLOW);
                         }
                         break;

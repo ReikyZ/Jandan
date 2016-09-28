@@ -153,21 +153,21 @@ public class WebPageFragment extends BaseFragment {
         Utils.log(TAG, "get News Succeed==" + mNewsModel.getTitle() + Utils.getLineNumber(new Exception()));
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
+        settings.setPluginState(WebSettings.PluginState.ON);
         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
 
         html = "<h3 style=\"font-family:verdana;color:red\">" + mNewsModel.getTitle() + "</h3>" +
                 "<p style=\"color:grey\">" + mNewsModel.getAuthor().getName() + "@" + mNewsModel.getTags().get(0).getTitle() + "</p>"
-                + mPageHtml.getContent().replace("<img ","<img style=\"width:100%;height:auto\" ");
+                + mPageHtml.getContent()
+                .replace("<img ", "<img style=\"width:100%;height:auto\" ")
+                .replace("width=\"600\"", "width=100%")
+                .replace("width=\"300\"", "width=100%")
+                .replace("width=\"480\"", "width=100%")
+                .replace("allowfullscreen=\"true\"", "allowfullscreen=\"false\"")
+                .replace("height=\"480\"", "");
 
         int end = html.indexOf("share-links");
         webView.loadData(html.substring(0, end - 10), "text/html; charset=UTF-8", "utf-8");
-//        webView.setWebViewClient(new WebViewClient() {
-//            @Override
-//            public void onPageFinished(WebView view, String url) {
-//                super.onPageFinished(view, url);
-//            }
-//        });
-
     }
 
 

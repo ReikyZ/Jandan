@@ -1,6 +1,8 @@
 package com.reikyz.jandan.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.reikyz.jandan.R;
+import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.model.GeneralPostModel;
+import com.reikyz.jandan.presenter.itempager.ItemPagerActivity;
 import com.reikyz.jandan.utils.BitmapUtils;
 import com.reikyz.jandan.utils.DentistyConvert;
 import com.reikyz.jandan.utils.TimeUtils;
@@ -18,6 +22,8 @@ import com.reikyz.jandan.utils.Utils;
 
 import java.text.ParseException;
 import java.util.List;
+
+import static android.R.attr.type;
 
 /**
  * Created by reikyZ on 16/8/23.
@@ -33,12 +39,27 @@ public class JokeAdapter extends BaseListAdapter<GeneralPostModel> {
     TextView tvJokeAuthor;
 
     @Override
-    public View getView(int position, final View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, ViewGroup parent) {
         BaseViewHolder holder = BaseViewHolder.getViewHolder(context,
                 convertView,
                 parent,
                 R.layout.item_joke,
                 position);
+
+        LinearLayout ll = holder.getView(R.id.ll_joke);
+        ll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ItemPagerActivity.class);
+                intent.putExtra(Config.TYPE, Config.JOKE);
+                intent.putExtra(Config.INDEX, position);
+
+                context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(
+                        R.anim.activity_horizonal_entry,
+                        R.anim.activity_half_horizonal_exit);
+            }
+        });
 
         tvJokeAuthor = holder.getView(R.id.tv_joke_author);
         TextView tvJokeDate = holder.getView(R.id.tv_joke_date);
@@ -71,7 +92,7 @@ public class JokeAdapter extends BaseListAdapter<GeneralPostModel> {
             ivJokePic.setVisibility(View.VISIBLE);
             String picUrl = joke.getComment_content().replace(joke.getText_content(), "").trim().replace("<img src=\"", "").replace("\" />", "");
 //            BitmapUtils.displayImage(picUrl, ivJokePic);
-            BitmapUtils.showJpg(context,picUrl,ivJokePic);
+            BitmapUtils.showJpg(context, picUrl, ivJokePic);
         } else {
             ivJokePic.setVisibility(View.GONE);
         }
