@@ -51,7 +51,7 @@
     <color name="bucket_bg">#cdff4d</color>
     <color name="transparent_grey">#33c6c7c3</color>
     <color name="flow_card_bg">#efeff4</color>
-
+    <color name="strong_grey">#444444</color>
 
     //JANDAN
     <color name="grey_jd">#444444</color>

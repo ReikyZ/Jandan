@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by reikyZ on 16/8/23.
  */
-public class JokeModel implements Serializable {
+public class GeneralPostModel implements Serializable {
     String comment_ID;
     String comment_post_ID;
     String comment_author;
@@ -29,7 +29,9 @@ public class JokeModel implements Serializable {
     String vote_negative;
     String vote_ip_pool;
     String text_content;
-    List<String> videos = new ArrayList<>();
+    List<String> pics = new ArrayList<>();
+    List<VideoModel> videos = new ArrayList<>();
+    CommentThreadModel thread;
 
     public String getComment_ID() {
         return comment_ID;
@@ -199,17 +201,33 @@ public class JokeModel implements Serializable {
         this.text_content = text_content;
     }
 
-    public List<String> getVideos() {
+    public List<String> getPics() {
+        return pics;
+    }
+
+    public void setPics(List<String> pics) {
+        this.pics = pics;
+    }
+
+    public List<VideoModel> getVideos() {
         return videos;
     }
 
-    public void setVideos(List<String> videos) {
+    public void setVideos(List<VideoModel> videos) {
         this.videos = videos;
+    }
+
+    public CommentThreadModel getThread() {
+        return thread;
+    }
+
+    public void setThread(CommentThreadModel thread) {
+        this.thread = thread;
     }
 
     @Override
     public String toString() {
-        return "JokeModel{" +
+        return "GeneralPostModel{" +
                 "comment_ID='" + comment_ID + '\'' +
                 ", comment_post_ID='" + comment_post_ID + '\'' +
                 ", comment_author='" + comment_author + '\'' +
@@ -231,7 +249,9 @@ public class JokeModel implements Serializable {
                 ", vote_negative='" + vote_negative + '\'' +
                 ", vote_ip_pool='" + vote_ip_pool + '\'' +
                 ", text_content='" + text_content + '\'' +
+                ", pics=" + pics +
                 ", videos=" + videos +
+                ", thread=" + thread +
                 '}';
     }
 }

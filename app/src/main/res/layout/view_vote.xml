@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/mid_margin"
+    android:layout_marginLeft="@dimen/min_margin"
+    android:layout_marginTop="@dimen/mid_margin"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+
+    <TextView
+        android:id="@+id/tv_oo_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:textSize="@dimen/ls_text_size" />
+
+
+    <TextView
+        android:id="@+id/tv_xx_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/mid_margin"
+        android:text="0"
+        android:textSize="@dimen/ls_text_size" />
+
+    <TextView
+        android:id="@+id/tv_spit_num"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/mid_margin"
+        android:text="0"
+        android:textColor="@color/strong_grey"
+        android:textSize="@dimen/ls_text_size" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_weight="1" />
+
+    <ImageView
+        android:id="@+id/iv_pic_action"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="@dimen/mid_margin"
+        android:background="@color/grey"
+        android:padding="@dimen/min_margin"
+        android:visibility="gone" />
+
+</LinearLayout>

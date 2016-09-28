@@ -5,8 +5,9 @@
     android:layout_height="90dp"
     android:orientation="horizontal"
     android:paddingLeft="@dimen/min_margin"
+    android:background="@color/alpha_grey"
     android:paddingRight="@dimen/min_margin"
-    android:paddingTop="@dimen/min_margin">
+    android:paddingTop="2dp">
 
     <com.reikyz.jandan.widget.ShadowLayout
         android:id="@+id/sl"
@@ -31,6 +32,7 @@
                 <TextView
                     android:id="@+id/tv_news_title"
                     android:layout_marginLeft="@dimen/min_margin"
+                    android:textSize="@dimen/sm_text_size"
                     android:layout_marginTop="@dimen/min_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -46,6 +48,7 @@
                 <TextView
                     android:id="@+id/tv_author"
                     android:layout_marginLeft="@dimen/min_margin"
+                    android:textSize="@dimen/ls_text_size"
                     android:layout_marginBottom="@dimen/min_margin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

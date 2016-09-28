@@ -1,11 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll_invalid"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:background="@color/grey_jd"
+    android:background="#2fff"
     android:gravity="center_horizontal|bottom"
     android:orientation="vertical">
 
+    <com.reikyz.jandan.widget.FlipDotView
+        android:id="@+id/fdv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/transparent"
+        app:dotBackDrawable="@mipmap/dot_back"
+        app:dotDrawable="@mipmap/dot"
+        app:dotPadding="1dp"
+        app:dotSize="5dp"
+        app:heightNum="14"
+        app:soundOn="false"
+        app:widthNum="40" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/riv_pre"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="50dp"
+        android:scaleType="centerCrop"
+        android:src="#2fff"
+        app:riv_border_color="@color/white"
+        app:riv_border_width="0.5dp"
+        app:riv_corner_radius="50dp" />
 
     <LinearLayout
         android:id="@+id/ll_news"
@@ -18,10 +48,11 @@
 
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="@dimen/max_margin"
-            android:background="@color/blue" />
+            android:padding="@dimen/min_margin"
+            android:src="@mipmap/ic_news" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -45,10 +76,11 @@
 
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="@dimen/max_margin"
-            android:background="@color/blue" />
+            android:padding="@dimen/min_margin"
+            android:src="@mipmap/ic_fun" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -72,10 +104,11 @@
 
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="@dimen/max_margin"
-            android:background="@color/blue" />
+            android:padding="@dimen/min_margin"
+            android:src="@mipmap/ic_girl" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -99,10 +132,11 @@
 
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="@dimen/max_margin"
-            android:background="@color/blue" />
+            android:padding="@dimen/min_margin"
+            android:src="@mipmap/ic_joke" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -122,12 +156,13 @@
         android:layout_marginBottom="10dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:paddingRight="30dp">
+        android:paddingRight="30dp"
+        android:visibility="gone">
 
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="@dimen/max_margin"
             android:background="@color/blue" />
 
@@ -159,10 +194,11 @@
 
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_marginLeft="@dimen/max_margin"
-            android:background="@color/blue" />
+            android:padding="@dimen/min_margin"
+            android:src="@mipmap/ic_setting" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -92,4 +92,11 @@ public class ApiParams {
             arrayMap.put("id", id + "");
         return arrayMap;
     }
+
+
+    public static RequestBody voteBody(String ID) {
+        ArrayMap<String, Object> arrayMap = new ArrayMap<>();
+        arrayMap.put("ID", ID);
+        return paramsToFormBody(joinParams(arrayMap));
+    }
 }

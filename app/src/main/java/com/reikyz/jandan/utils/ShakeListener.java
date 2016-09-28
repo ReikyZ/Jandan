@@ -41,13 +41,13 @@ public class ShakeListener implements SensorEventListener {
     //开始
     public void start() {
         //获得传感器管理器
-        sensorManager = (SensorManager)context.getSystemService(Context.SENSOR_SERVICE);
-        if(sensorManager != null) {
+        sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager != null) {
             //获得重力传感器
             sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         }
         //注册
-        if(sensor != null) {
+        if (sensor != null) {
             sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_GAME);
         }
 
@@ -76,7 +76,7 @@ public class ShakeListener implements SensorEventListener {
         //两次检测的时间间隔
         long timeInterval = currentUpdateTime - lastUpdateTime;
         //判断是否达到了检测时间间隔
-        if(timeInterval < UPTATE_INTERVAL_TIME)
+        if (timeInterval < UPTATE_INTERVAL_TIME)
             return;
         //现在的时间变成last时间
         lastUpdateTime = currentUpdateTime;
@@ -96,10 +96,12 @@ public class ShakeListener implements SensorEventListener {
         lastY = y;
         lastZ = z;
 
-        double speed = Math.sqrt(deltaX*deltaX + deltaY*deltaY + deltaZ*deltaZ)/timeInterval * 10000;
+        double speed = Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) / timeInterval * 10000;
         //达到速度阀值，发出提示
-        if(speed >= SPEED_SHRESHOLD)
-            onShakeListener.onShake();
+        if (speed >= SPEED_SHRESHOLD) {
+            if (onShakeListener != null)
+                onShakeListener.onShake();
+        }
     }
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {

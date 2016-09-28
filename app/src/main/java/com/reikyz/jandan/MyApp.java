@@ -3,7 +3,10 @@ package com.reikyz.jandan;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.support.multidex.MultiDex;
+import android.view.Gravity;
 
 import com.crashlytics.android.Crashlytics;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -13,11 +16,18 @@ import com.reikyz.api.impl.ApiImpl;
 import com.reikyz.api.model.ApiResponse;
 import com.reikyz.api.utils.SessionData;
 import com.reikyz.jandan.async.ResponseSimpleNetTask;
+import com.reikyz.jandan.data.Config;
+import com.reikyz.jandan.data.EventConfig;
+import com.reikyz.jandan.data.Prefs;
+import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.model.NewsModel;
 import com.reikyz.jandan.utils.BitmapUtils;
 import com.reikyz.jandan.utils.Utils;
+import com.squareup.leakcanary.LeakCanary;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
+
+import org.simple.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,18 +39,25 @@ import io.fabric.sdk.android.Fabric;
 
 public class MyApp extends Application {
 
-    final static String TAG = "===MyApp===";
+    final String TAG = "===MyApp===";
 
     static MyApp instance;
     static Context context;
     static Stack<Activity> activityStack;
     static Activity currentActivity;
     public static IWXAPI iwxapi;
-    protected ApiImpl api;
+    protected static ApiImpl api;
 
     //DATA
-    public static Integer currentIndex;
+   public static long timeCount = 0;
+    public static boolean updateFunCilently = false;
+    public static boolean updateGirlCilently = false;
+    public static Integer currentNewsIndex, currentFunPicIndex, currentGirlPicIndex, currentJokeIndex, currentVideoIndex;
     public static List<NewsModel> newsList = new ArrayList<>();
+    public static List<GeneralPostModel> funPicList = new ArrayList<>();
+    public static List<GeneralPostModel> girlPicLIst = new ArrayList<>();
+    public static List<GeneralPostModel> jokeList = new ArrayList<>();
+    public static List<GeneralPostModel> videoLIst = new ArrayList<>();
 
     public synchronized static MyApp getInstance() {
         if (instance == null) {
@@ -52,7 +69,15 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
+        // Fabric
+//        Fabric.with(this, new Crashlytics());
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new Crashlytics())
+                .debuggable(true)
+                .build();
+        Fabric.with(fabric);
+
+
         initImageLoader(this);
         context = getApplicationContext();
         api = new ApiImpl();
@@ -63,6 +88,11 @@ public class MyApp extends Application {
 
         MultiDex.install(context);
 
+        //内存泄露检测
+        LeakCanary.install(this);
+        getInfo();
+
+
 //        testApi();
     }
 
@@ -70,22 +100,38 @@ public class MyApp extends Application {
         new ResponseSimpleNetTask(this, false) {
             @Override
             protected ApiResponse doInBack() throws Exception {
-                return api.generalApi("get_recent_posts",
-                        "url,date,tags,author,title,comment_count,custom_fields",
-                        1,
-                        "thumb_c,views",
-                        1,
-                        null);
+                return api.testAPi();
             }
 
             @Override
             protected void onSucceed(String result) throws Exception {
-                Utils.log(TAG, "onSucceed" + "==" + Utils.getLineNumber(new Exception()));
+                Utils.log(TAG, result + Utils.getLineNumber(new Exception()));
             }
 
             @Override
             protected void onFailure() {
-                Utils.log(TAG, "onFailure");
+                Utils.log(TAG, "onFailure" + Utils.getLineNumber(new Exception()));
+            }
+        }.execute();
+    }
+
+    private void getInfo() {
+        new ResponseSimpleNetTask(this, false) {
+            @Override
+            protected ApiResponse doInBack() throws Exception {
+                return api.getInfo();
+            }
+
+            @Override
+            protected void onSucceed(String result) throws Exception {
+                if (result.length() > 0) {
+                    Prefs.save(Config.YWZ_INFO, result);
+                }
+            }
+
+            @Override
+            protected void onFailure() {
+                Utils.log(TAG, "onFailure" + Utils.getLineNumber(new Exception()));
             }
         }.execute();
 
@@ -142,6 +188,32 @@ public class MyApp extends Application {
                 activity.finish();
             }
         }
+    }
+
+    static Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    handler.removeMessages(1);
+                    timeCount += 5000;
+                    handler.sendEmptyMessageDelayed(1, 5000);
+            }
+        }
+    };
+
+    synchronized public static void startCountTime() {
+        handler.sendEmptyMessageDelayed(1, 5000);
+    }
+
+    public static void stopCountTime() {
+        handler.removeMessages(1);
+    }
+
+
+    public static ApiImpl getApi() {
+        return api;
     }
 
     public static Context getContext() {

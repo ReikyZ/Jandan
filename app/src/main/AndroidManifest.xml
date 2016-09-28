@@ -24,7 +24,10 @@
 
         <activity
             android:name=".presenter.itempager.ItemPagerActivity"
+            android:hardwareAccelerated="false"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".presenter.ShowPicActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

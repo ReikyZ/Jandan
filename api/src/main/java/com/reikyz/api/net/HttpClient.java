@@ -137,6 +137,10 @@ public class HttpClient {
         return execute(postMethodRequest(url, body, isHeader), isHeader);
     }
 
+    public static Response post(String url, RequestBody body, boolean isHeader, String cookie) throws IOException {
+        return execute(postMethodWithCookieRequest(url, body, cookie), isHeader);
+    }
+
     public static Response getHtml(String url, boolean isHeader) throws IOException {
         return executeHtml(getMethodRequest(url, isHeader), isHeader);
     }

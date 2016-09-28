@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+
+    android:paddingBottom="@dimen/min_margin"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/bg_grey"
+        android:layout_height="0.5dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/min_margin">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/civ_head_image"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_margin="@dimen/min_margin"
+            android:src="@mipmap/person" />
+
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_comment_author"
+                    android:maxWidth="150dp"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="momomo"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/tv_comment_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/min_margin"
+                    android:text=" \@years ago"
+                    android:textSize="@dimen/ms_text_size" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@mipmap/like" />
+
+                <TextView
+                    android:id="@+id/id_like_comment_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/strong_grey"
+                    android:layout_marginRight="@dimen/mid_margin"
+                    android:text="0"
+                    android:textSize="@dimen/ls_text_size" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <TextView
+                    android:id="@+id/tv_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text=""
+                    android:textColor="@color/strong_grey" />
+
+                <ImageButton
+                    android:layout_width="match_parent"
+                    android:id="@+id/iv_comment"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

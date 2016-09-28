@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.reikyz.jandan.widget.CircleProgressBar
+        android:id="@+id/proBar"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerHorizontal="true"
+        android:padding="@dimen/max_margin"
+        app:mlpb_enable_circle_background="false"
+        app:mlpb_progress_stoke_width="4dp"
+        app:mlpb_progress_text_visibility="invisible"
+        app:mlpb_show_arrow="false" />
+
+    <ImageView
+        android:id="@+id/iv_pic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:scaleType="fitXY" />
+
+
+</RelativeLayout>

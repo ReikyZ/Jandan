@@ -16,10 +16,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
@@ -618,4 +621,31 @@ public class BitmapUtils {
         return BitmapFactory.decodeStream(is, null, opt);
     }
 
+    public static void showGif(Context context, String url, ImageView imageView) {
+        Glide.with(context)
+                .load(url)
+                .asBitmap()
+                .skipMemoryCache(false)
+                .diskCacheStrategy( DiskCacheStrategy.SOURCE )
+                .into(imageView);
+    }
+
+    public static void playGif(Context context, String url, ImageView imageView) {
+        Glide.with(context)
+                .load(url)
+                .skipMemoryCache(false)
+                .diskCacheStrategy( DiskCacheStrategy.SOURCE )
+                .into(imageView);
+
+    }
+
+
+    public static void showJpg(Context context, String url, ImageView imageView) {
+        Glide.with(context)
+                .load(url)
+                .skipMemoryCache(false)
+                .diskCacheStrategy( DiskCacheStrategy.SOURCE )
+                .dontAnimate()
+                .into(imageView);
+    }
 }

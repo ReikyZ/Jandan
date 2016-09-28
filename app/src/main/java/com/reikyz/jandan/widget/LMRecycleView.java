@@ -1,6 +1,7 @@
 package com.reikyz.jandan.widget;
 
 import android.content.Context;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -10,12 +11,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.reikyz.jandan.R;
+import com.reikyz.jandan.utils.Utils;
 
 
 /**
  * Created by Reiky on 2016/2/24.
  */
 public class LMRecycleView extends RecyclerView implements SwipeRefreshLayout.OnRefreshListener {
+
+    final String TAG = "==LMRecycleView==";
 
     View footView;
     CircleProgressBar progressBar;
@@ -24,6 +28,16 @@ public class LMRecycleView extends RecyclerView implements SwipeRefreshLayout.On
     LayoutInflater inflater;
     SwipeRefreshLayout refreshLayout;
     DataChangeListener listener = null;
+
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
+    }
+
+    boolean isLoading = false;
 
     public LMRecycleView(Context context) {
         this(context, null);
@@ -50,12 +64,29 @@ public class LMRecycleView extends RecyclerView implements SwipeRefreshLayout.On
         progressBar.setVisibility(INVISIBLE);
         ivFantwanIcon.setVisibility(INVISIBLE);
 //        this.addFooterView(footView, "", false);
-        tvLoadMore.setOnClickListener(new View.OnClickListener() {
+
+        setOnScrollListener(this);
+    }
+
+    private void setOnScrollListener(LMRecycleView lmRecycleView) {
+        lmRecycleView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onClick(View v) {
-                if (listener != null) {
-                    loading();
-                    listener.loadMore();
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (!canScrollUp(recyclerView)) {
+                    refreshLayout.setEnabled(true);
+                } else if (!canScrollDown(recyclerView)) {
+                    if (!isLoading) {
+                        loading();
+                        listener.loadMore();
+                    }
+                } else {
+                    refreshLayout.setEnabled(false);
                 }
             }
         });
@@ -130,4 +161,14 @@ public class LMRecycleView extends RecyclerView implements SwipeRefreshLayout.On
 
         void loadMore();
     }
+
+
+    private boolean canScrollDown(RecyclerView recyclerView) {
+        return ViewCompat.canScrollVertically(recyclerView, 1);
+    }
+
+    private boolean canScrollUp(RecyclerView recyclerView) {
+        return ViewCompat.canScrollVertically(recyclerView, -1);
+    }
+
 }

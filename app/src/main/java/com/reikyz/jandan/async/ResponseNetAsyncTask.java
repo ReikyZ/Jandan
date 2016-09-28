@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.system.ErrnoException;
 import android.util.Log;
 
 import com.reikyz.api.model.ApiResponse;
@@ -20,6 +21,9 @@ import com.reikyz.jandan.widget.LMListView;
 
 
 public abstract class ResponseNetAsyncTask extends AsyncTask<Void, Void, ApiResponse> {
+
+    final static String TAG = "===ResponseNetAsyncTask===";
+
     Dialog dialog;
     SwipeRefreshLayout swipeRefreshLayout;
     LMListView listView;
@@ -152,13 +156,15 @@ public abstract class ResponseNetAsyncTask extends AsyncTask<Void, Void, ApiResp
             //错误时根据不同情况做出相应提示
             if (response.getCode() == HttpCode.TOKEN_EXPIRED.getCode())
 //                JPushInterface.stopPush(ctx);
-            Log.i("error", response.getMsg() + " ");
+                Log.i("error", response.getMsg() + " ");
             if (showErrorMsg) {
                 if (response.getCode() == 600) {
                     Utils.showToast(ctx, "网络中断");
                 } else {
-                    if (!response.getMsg().equals("请先登录"))
-                        Utils.showToast(ctx, response.getMsg() + "");
+                    if (!response.getMsg().equals("请先登录")) {
+                        Utils.log(TAG, response.getMsg() + Utils.getLineNumber(new Exception()));
+//                        Utils.showToast(ctx, response.getMsg() + "");
+                    }
                 }
             }
             onFailure();

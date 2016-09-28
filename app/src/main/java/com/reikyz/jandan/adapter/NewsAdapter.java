@@ -10,10 +10,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.model.NewsModel;
 import com.reikyz.jandan.presenter.itempager.ItemPagerActivity;
+import com.reikyz.jandan.utils.AnimHelper;
 import com.reikyz.jandan.utils.BitmapUtils;
 import com.reikyz.jandan.utils.Utils;
 
@@ -43,11 +45,17 @@ public class NewsAdapter extends BaseListAdapter<NewsModel> {
         llNews.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                MyApp.currentNewsIndex = position;
                 Intent intent = new Intent(context, ItemPagerActivity.class);
+                intent.putExtra(Config.TYPE, Config.NEWS);
                 intent.putExtra(Config.INDEX, position);
 
                 Utils.log(TAG, "" + Utils.getLineNumber(new Exception()));
                 context.startActivity(intent);
+                ((Activity) context).overridePendingTransition(
+                        R.anim.activity_horizonal_entry,
+                        R.anim.activity_half_horizonal_exit);
             }
         });
 
@@ -57,7 +65,6 @@ public class NewsAdapter extends BaseListAdapter<NewsModel> {
         ImageView ivNewsThumb = holder.getView(R.id.iv_news_thumb);
 
         NewsModel news = models.get(position);
-
 
         if (news.getTitle() != null)
             tvNewsTitle.setText(news.getTitle());
@@ -78,9 +85,11 @@ public class NewsAdapter extends BaseListAdapter<NewsModel> {
                 && news.getCustom_fields().getThumb_c().size() > 0
                 && news.getCustom_fields().getThumb_c().get(0) != null
                 && !TextUtils.isEmpty(news.getCustom_fields().getThumb_c().get(0))) {
-            BitmapUtils.displayImage(news.getCustom_fields().getThumb_c().get(0), ivNewsThumb);
+//            BitmapUtils.displayImage(news.getCustom_fields().getThumb_c().get(0), ivNewsThumb);
+            BitmapUtils.showJpg(context,news.getCustom_fields().getThumb_c().get(0),ivNewsThumb);
         }
 
+//        AnimHelper.showItemLoading(context, holder.getConvertView());
         return holder.getConvertView();
     }
 
