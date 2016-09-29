@@ -55,7 +55,7 @@ public class MenuLeftFragment extends Fragment implements MenuLeftContract.View 
 //        time = TimeUtils.getCurrentTime();
 //        showTime = time.substring(time.length() - 5, time.length());
         Utils.log(TAG, time + Utils.getLineNumber(new Exception()));
-        if (showTime==null){
+        if (showTime == null) {
             time = TimeUtils.getPastTime(MyApp.timeCount);
             showTime = time;
         }
@@ -144,7 +144,7 @@ public class MenuLeftFragment extends Fragment implements MenuLeftContract.View 
     @Subscriber(tag = EventConfig.PRELOAD_IMG)
     void preload(String url) {
 //        BitmapUtils.displayImage(url, riv);
-        BitmapUtils.showJpg(getActivity(),url,riv);
+        BitmapUtils.showJpg(MyApp.getContext(), url, riv);
     }
 
 

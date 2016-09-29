@@ -5,6 +5,7 @@
     android:layout_marginBottom="@dimen/mid_margin"
     android:layout_marginLeft="@dimen/min_margin"
     android:layout_marginTop="@dimen/mid_margin"
+    android:background="@color/white"
     android:gravity="center_vertical"
     android:orientation="horizontal">
 

@@ -17,8 +17,8 @@ import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.async.ResponseSimpleNetTask;
 import com.reikyz.jandan.data.Config;
+import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
-import com.reikyz.jandan.db.VoteDAOImpl;
 import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.presenter.itempager.ItemPagerActivity;
 import com.reikyz.jandan.utils.BitmapUtils;
@@ -26,8 +26,9 @@ import com.reikyz.jandan.utils.DentistyConvert;
 import com.reikyz.jandan.utils.TimeUtils;
 import com.reikyz.jandan.utils.Utils;
 
+import org.simple.eventbus.EventBus;
+
 import java.text.ParseException;
-import java.util.Random;
 
 /**
  * Created by reikyZ on 16/8/25.
@@ -37,7 +38,7 @@ public class PicCardView extends LinearLayout {
     final String TAG = "==PicCardView==";
 
     Context mContext;
-    VoteDAOImpl voteDAO;
+
 
     public PicCardView(Context context) {
         this(context, null);
@@ -50,7 +51,6 @@ public class PicCardView extends LinearLayout {
     public PicCardView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mContext = context;
-        voteDAO = VoteDAOImpl.getInstance(context);
         initView(context);
     }
 
@@ -166,7 +166,7 @@ public class PicCardView extends LinearLayout {
                 tvVideoDes.setText(picModel.getVideos().get(0).getTitle());
 
         } else {
-            ivPicContent.setImageDrawable(mContext.getResources().getDrawable(R.mipmap.blank_vertical));
+//            ivPicContent.setImageDrawable(mContext.getResources().getDrawable(R.mipmap.blank_vertical));
 
 
             if (width == null) width = ivPicContent.getWidth();
@@ -186,7 +186,7 @@ public class PicCardView extends LinearLayout {
                 if (picModel.getPics().get(0).indexOf(".gif") > 0) {
                     BitmapUtils.showGif(mContext, picModel.getPics().get(0), ivPicContent);
                 } else {
-                    BitmapUtils.displayImageWithAnim(picModel.getPics().get(0), ivPicContent);
+                    BitmapUtils.showJpg(mContext, picModel.getPics().get(0), ivPicContent);
 
                 }
             }
@@ -215,13 +215,14 @@ public class PicCardView extends LinearLayout {
         if (picModel.getVote_negative() != null)
             downVoted = Integer.parseInt(picModel.getVote_negative());
 
-        voteDAO.setPositive(picModel.getComment_ID(), upVoted);
-        voteDAO.setNegative(picModel.getComment_ID(), downVoted);
+        MyApp.voteDAO.setPositive(picModel.getComment_ID(), upVoted);
+        MyApp.voteDAO.setNegative(picModel.getComment_ID(), downVoted);
 
-        if (checkVoted(picModel.getComment_ID()) != 0) {
-            if (checkVoted(picModel.getComment_ID()) == 1) {
+        int vote = checkVoted(picModel.getComment_ID());
+        if (vote != 0) {
+            if (vote == 1) {
                 // set RED
-                if (upVoted != null && upVoted == 0) upVoted++;
+                upVoted++;
                 tvOoNum.setText("OO " + upVoted);
                 tvXxNum.setText("XX " + downVoted);
 
@@ -231,7 +232,7 @@ public class PicCardView extends LinearLayout {
                 tvXxNum.setTypeface(null, 0);
             } else {
                 tvOoNum.setText("OO " + upVoted);
-                if (downVoted != null && downVoted == 0) upVoted++;
+                downVoted++;
                 tvXxNum.setText("XX " + downVoted);
 
                 tvOoNum.setTextColor(mContext.getResources().getColor(R.color.grey));
@@ -272,8 +273,7 @@ public class PicCardView extends LinearLayout {
     }
 
     private int checkVoted(String post_id) {
-        int result = voteDAO.getVoted(post_id);
-        Utils.log(TAG, post_id + "===" + result + Utils.getLineNumber(new Exception()));
+        int result = MyApp.voteDAO.getVoted(post_id);
         return result;
     }
 
@@ -291,20 +291,21 @@ public class PicCardView extends LinearLayout {
 
             @Override
             protected void onSucceed(String result) throws Exception {
-                voteDAO.setVoted(post_id, voted);
-
+                MyApp.voteDAO.setVoted(post_id, voted);
+                Utils.showToast(mContext, "Thanks~");
                 String cookie = Prefs.getString(Config.COOKIE);
                 if (TextUtils.isEmpty(cookie)) {
                     Prefs.save(Config.COOKIE, "voted_comments_" + mPicModel.getComment_ID() + "=" + voted);
                 } else
                     Prefs.save(Config.COOKIE, cookie + ";voted_comments_" + mPicModel.getComment_ID() + "=" + voted);
 
-                Utils.log(TAG, cookie + "==" + result + Utils.getLineNumber(new Exception()));
+                EventBus.getDefault().post(0, EventConfig.REFRESH_FLOW);
             }
 
             @Override
             protected void onFailure() {
-                Utils.showToast(mContext, "网络不好,稍后再试");
+                postVote(post_id, option, voted);
+//                Utils.showToast(mContext, "网络不好,稍后再试");
             }
         }.execute();
     }

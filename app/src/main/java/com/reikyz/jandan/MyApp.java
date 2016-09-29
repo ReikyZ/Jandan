@@ -19,6 +19,7 @@ import com.reikyz.jandan.async.ResponseSimpleNetTask;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
+import com.reikyz.jandan.db.VoteDAOImpl;
 import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.model.NewsModel;
 import com.reikyz.jandan.utils.BitmapUtils;
@@ -48,8 +49,11 @@ public class MyApp extends Application {
     public static IWXAPI iwxapi;
     protected static ApiImpl api;
 
+    // DB
+    public static VoteDAOImpl voteDAO;
+
     //DATA
-   public static long timeCount = 0;
+    public static long timeCount = 0;
     public static boolean updateFunCilently = false;
     public static boolean updateGirlCilently = false;
     public static Integer currentNewsIndex, currentFunPicIndex, currentGirlPicIndex, currentJokeIndex, currentVideoIndex;
@@ -89,11 +93,16 @@ public class MyApp extends Application {
         MultiDex.install(context);
 
         //内存泄露检测
-        LeakCanary.install(this);
+//        LeakCanary.install(this);
         getInfo();
 
+        intiDB();
 
 //        testApi();
+    }
+
+    private void intiDB() {
+        voteDAO = VoteDAOImpl.getInstance(context);
     }
 
     private void testApi() {

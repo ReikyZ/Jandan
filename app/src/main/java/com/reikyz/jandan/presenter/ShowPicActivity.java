@@ -3,6 +3,8 @@ package com.reikyz.jandan.presenter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
@@ -34,19 +36,39 @@ public class ShowPicActivity extends BaseActivity {
             }
         });
 
-        String picUrl = getIntent().getStringExtra(Config.PIC_URL);
+        final String picUrl = getIntent().getStringExtra(Config.PIC_URL);
         if (picUrl == null)
             finish();
 
         if (picUrl.indexOf("http") < 0) { // 不是网络图片
             bitmap = BitmapFactory.decodeFile(picUrl);
-        } else {
-            bitmap = ImageLoader.getInstance().loadImageSync(picUrl);
-        }
 
-        if (bitmap != null)
-            zoomImageView.setImageBitmap(bitmap);
+            if (bitmap != null)
+                zoomImageView.setImageBitmap(bitmap);
+        } else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    bitmap = ImageLoader.getInstance().loadImageSync(picUrl);
+
+                    if (bitmap != null)
+                        mHandler.sendEmptyMessageDelayed(0, 0);
+                }
+            }).start();
+
+        }
     }
+
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    zoomImageView.setImageBitmap(bitmap);
+            }
+        }
+    };
 
     @Override
     protected void onDestroy() {

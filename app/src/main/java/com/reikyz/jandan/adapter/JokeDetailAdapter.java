@@ -3,21 +3,30 @@ package com.reikyz.jandan.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.reikyz.api.model.ApiResponse;
+import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
+import com.reikyz.jandan.async.ResponseSimpleNetTask;
 import com.reikyz.jandan.data.Config;
+import com.reikyz.jandan.data.EventConfig;
+import com.reikyz.jandan.data.Prefs;
 import com.reikyz.jandan.model.DuoshuoCommentModel;
 import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.presenter.ShowPicActivity;
 import com.reikyz.jandan.utils.BitmapUtils;
+import com.reikyz.jandan.utils.DentistyConvert;
 import com.reikyz.jandan.utils.TimeUtils;
 import com.reikyz.jandan.utils.Utils;
 import com.reikyz.jandan.widget.CircleProgressBar;
+
+import org.simple.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +46,7 @@ public class JokeDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
     final static int ITEM_HOT_TITLE = 0x02;
     final static int ITEM_TITLE = 0x03;
     final static int ITEM_COMMENT = 0x04;
+    final static int ITEM_VOTE = 0x05;
 
     private Context mContext;
     private GeneralPostModel mPostModel;
@@ -56,9 +66,9 @@ public class JokeDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
     @Override
     public int getCount() {
         if (mHotPost.size() > 0) {
-            return 1 + 1 + 1 + mHotPost.size() + 1 + models.size();
+            return 1 + 1 + 1 + 1 + mHotPost.size() + 1 + models.size();
         } else {
-            return 1 + 1 + 1 + models.size();
+            return 1 + 1 + 1 + 1 + models.size();
         }
     }
 
@@ -75,18 +85,20 @@ public class JokeDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
             return ITEM_JOKE;
         } else if (position == 1) {
             return ITEM_DESCRIP;
-        } else if (position > 1) {
+        } else if (position == 2) {
+            return ITEM_VOTE;
+        } else if (position > 2) {
             if (mHotPost.size() > 0) {
-                if (position == 1 + 1) {
+                if (position == 3) {
                     return ITEM_HOT_TITLE;
-                } else if (position == 1 + 1 + mHotPost.size() + 1) {
+                } else if (position == 3 + mHotPost.size() + 1) {
                     return ITEM_TITLE;
                 } else {
                     return ITEM_COMMENT;
                 }
 
             } else {
-                if (position > 1 + 1) {
+                if (position > 3) {
                     return ITEM_COMMENT;
                 } else {
                     return ITEM_TITLE;
@@ -150,6 +162,82 @@ public class JokeDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
                 }
 
                 break;
+            case ITEM_VOTE:
+                holder = BaseViewHolder.getViewHolder(
+                        context,
+                        convertView,
+                        parent,
+                        R.layout.view_vote,
+                        position
+                );
+
+                TextView tvOoNum = holder.getView(R.id.tv_oo_num);
+                TextView tvXxNum = holder.getView(R.id.tv_xx_num);
+                TextView tvSpitNum = holder.getView(R.id.tv_spit_num);
+
+                tvOoNum.setPadding(DentistyConvert.dp2px(15), DentistyConvert.dp2px(15), 0, DentistyConvert.dp2px(15));
+                tvXxNum.setPadding(DentistyConvert.dp2px(15), DentistyConvert.dp2px(15), 0, DentistyConvert.dp2px(15));
+                tvSpitNum.setVisibility(View.GONE);
+
+                Integer upVoted = null, downVoted = null;
+                if (mPostModel.getVote_positive() != null)
+                    upVoted = Integer.parseInt(mPostModel.getVote_positive());
+                if (mPostModel.getVote_negative() != null)
+                    downVoted = Integer.parseInt(mPostModel.getVote_negative());
+
+                int vote = checkVoted(mPostModel.getComment_ID());
+                if (vote != 0) {
+                    if (vote == 1) {
+                        // set RED
+                        upVoted++;
+                        tvOoNum.setText("OO " + upVoted);
+                        tvXxNum.setText("XX " + downVoted);
+
+                        tvOoNum.setTextColor(mContext.getResources().getColor(R.color.red));
+                        tvXxNum.setTextColor(mContext.getResources().getColor(R.color.grey));
+                        tvOoNum.setTypeface(null, Typeface.BOLD);
+                        tvXxNum.setTypeface(null, 0);
+                    } else {
+                        tvOoNum.setText("OO " + upVoted);
+                        downVoted++;
+                        tvXxNum.setText("XX " + downVoted);
+
+                        tvOoNum.setTextColor(mContext.getResources().getColor(R.color.grey));
+                        tvXxNum.setTextColor(mContext.getResources().getColor(R.color.blue));
+                        tvOoNum.setTypeface(null, 0);
+                        tvXxNum.setTypeface(null, Typeface.BOLD);
+                    }
+                } else {
+                    tvOoNum.setTextColor(mContext.getResources().getColor(R.color.strong_grey));
+                    tvXxNum.setTextColor(mContext.getResources().getColor(R.color.strong_grey));
+
+                    tvOoNum.setText("OO " + upVoted);
+                    tvXxNum.setText("XX " + downVoted);
+
+                    tvOoNum.setTypeface(null, 0);
+                    tvXxNum.setTypeface(null, 0);
+
+                }
+
+
+                tvOoNum.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (checkVoted(mPostModel.getComment_ID()) == 0)
+                            postVote(mPostModel.getComment_ID(), 1, 1);
+                        else Utils.showToast(mContext, "似乎已经投过了");
+                    }
+                });
+                tvXxNum.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (checkVoted(mPostModel.getComment_ID()) == 0)
+                            postVote(mPostModel.getComment_ID(), 0, -1);
+                        else Utils.showToast(mContext, "似乎已经投过了");
+                    }
+                });
+                break;
+
             case ITEM_HOT_TITLE:
                 holder = BaseViewHolder.getViewHolder(
                         context,
@@ -193,13 +281,13 @@ public class JokeDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
 
                 DuoshuoCommentModel commentModel;
                 if (mHotPost.size() == 0) {
-                    commentModel = models.get(position - 2 - 1);
+                    commentModel = models.get(position - 3 - 1);
                 } else {
-                    if (position <= 1 + 2 + mHotPost.size()) {
-                        int index = position - 1 - 2;
+                    if (position <= 1 + 3 + mHotPost.size()) {
+                        int index = position - 1 - 3;
                         commentModel = getCommentByID(mHotPost.get(index));
                     } else {
-                        commentModel = models.get(position - 1 - 3 - mHotPost.size());
+                        commentModel = models.get(position - 1 - 4 - mHotPost.size());
                     }
                 }
 
@@ -266,5 +354,44 @@ public class JokeDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
             }
         }
         return null;
+    }
+
+    private int checkVoted(String post_id) {
+        int result = MyApp.voteDAO.getVoted(post_id);
+        Utils.log(TAG, post_id + "===" + result + Utils.getLineNumber(new Exception()));
+        return result;
+    }
+
+    private void postVote(final String post_id, final int option, final int voted) {
+        new ResponseSimpleNetTask(mContext, false) {
+            @Override
+            protected ApiResponse doInBack() throws Exception {
+                return MyApp.getApi().postVote("true",
+                        option,
+                        mPostModel.getComment_ID(),
+                        Prefs.getString(Config.COOKIE, ""));
+            }
+
+            @Override
+            protected void onSucceed(String result) throws Exception {
+                MyApp.voteDAO.setVoted(post_id, voted);
+                Utils.showToast(context, "Thanks~");
+                String cookie = Prefs.getString(Config.COOKIE);
+                if (TextUtils.isEmpty(cookie)) {
+                    Prefs.save(Config.COOKIE, "voted_comments_" + mPostModel.getComment_ID() + "=" + voted);
+                } else
+                    Prefs.save(Config.COOKIE, cookie + ";voted_comments_" + mPostModel.getComment_ID() + "=" + voted);
+
+                Utils.log(TAG, cookie + "==" + result + Utils.getLineNumber(new Exception()));
+                EventBus.getDefault().post(0, EventConfig.REFRESH_JOKE_DETAIL);
+            }
+
+            @Override
+            protected void onFailure() {
+                postVote(post_id, option, voted);
+                Utils.log(TAG, "Vote Failed" + Utils.getLineNumber(new Exception()));
+//                Utils.showToast(mContext, "网络不好,稍后再试");
+            }
+        }.execute();
     }
 }

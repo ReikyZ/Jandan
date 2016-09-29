@@ -15,4 +15,8 @@ public class EventConfig {
     public static final String SET_TIME = "SET_TIME";
     public static final String DATA_CHANGED = "DATA_CHANGED";
     public static final String PICS_CHANGED = "PICS_CHANGED";
+    public static final String REFRESH_FLOW = "REFRESH_FLOW";
+    public static final String REFRESH_PIC_DETAIL = "REFRESH_PIC_DETAIL";
+    public static final String REFRESH_JOKE_DETAIL = "REFRESH_JOKE_DETAIL";
+    public static final String REFRESH_JOKE_LIST = "REFRESH_JOKE_LIST";
 }

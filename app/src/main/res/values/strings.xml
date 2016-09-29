@@ -1,13 +1,13 @@
 <resources>
 
     <!--DEBUG_KEYS-->
-    <string name="isDeveloping">true</string>
-    <string name="wxapp_id">e1cb249bad938f6c739fff459a721d59</string>
+    <!--<string name="isDeveloping">true</string>-->
+    <!--<string name="wxapp_id">e1cb249bad938f6c739fff459a721d59</string>-->
 
 
     <!--RELEASE_KEYS-->
-    <!--<string name="isDeveloping">false</string>-->
-    <!--<string name="wxapp_id">194f40a28641ff880d54f2c20687f3b8</string>-->
+    <string name="isDeveloping">false</string>
+    <string name="wxapp_id">194f40a28641ff880d54f2c20687f3b8</string>
 
 
     <string name="app_name">煎蛋</string>

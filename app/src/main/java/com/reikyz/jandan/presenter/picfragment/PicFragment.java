@@ -16,6 +16,7 @@ import com.reikyz.jandan.R;
 import com.reikyz.jandan.adapter.PicDetailAdapter;
 import com.reikyz.jandan.async.ResponseSimpleNetTask;
 import com.reikyz.jandan.data.Config;
+import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.model.DuoshuoCommentModel;
 import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.presenter.BaseFragment;
@@ -23,6 +24,7 @@ import com.reikyz.jandan.utils.Utils;
 
 import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -120,7 +122,8 @@ public class PicFragment extends BaseFragment {
 
             @Override
             protected void onFailure() {
-                Utils.showToast(getActivity(),"获取吐槽失败");
+                getComments();
+//                Utils.showToast(getActivity(),"获取吐槽失败");
             }
         }.execute();
     }
@@ -147,5 +150,11 @@ public class PicFragment extends BaseFragment {
         adapter.setmHotPost(hotPost);
         adapter.notifyDataSetChanged();
 
+    }
+
+
+    @Subscriber(tag = EventConfig.REFRESH_PIC_DETAIL)
+    void refreshPicDetail(int i) {
+        adapter.notifyDataSetChanged();
     }
 }

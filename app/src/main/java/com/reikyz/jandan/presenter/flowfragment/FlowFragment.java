@@ -101,6 +101,7 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
                 results = Prefs.getString(Config.PRELOAD_FUN_PIC);
                 if (results != null) {
                     List<GeneralPostModel> tmpNewsList = JSON.parseArray(results, GeneralPostModel.class);
+                    MyApp.funPicList = tmpNewsList;
                     adapter.refreshItems(tmpNewsList, getMore);
                 }
                 break;
@@ -118,6 +119,7 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
                 if (results != null) {
                     Utils.log(TAG, results.substring(710, 720));
                     List<GeneralPostModel> tmpNewsList = JSON.parseArray(results, GeneralPostModel.class);
+                    MyApp.girlPicLIst = tmpNewsList;
                     adapter.refreshItems(tmpNewsList, getMore);
                 }
                 break;
@@ -288,7 +290,6 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
                         filterEmptyVideo();
                         adapter.addMoreItem(tmpList, getMore);
                     }
-                    Utils.log(TAG, Utils.getLineNumber(new Exception()));
                     EventBus.getDefault().post(0, EventConfig.PICS_CHANGED);
                     getMore = true;
                 }
@@ -328,6 +329,11 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
     void notifyLoadMore(int i) {
         Utils.log(TAG, Utils.getLineNumber(new Exception()));
         loadMore();
+    }
+
+    @Subscriber(tag = EventConfig.REFRESH_FLOW)
+    void refreshFlow(int i) {
+        adapter.notifyDataSetChanged();
     }
 
     @Override

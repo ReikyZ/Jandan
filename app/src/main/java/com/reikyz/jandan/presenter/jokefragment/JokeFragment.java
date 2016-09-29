@@ -17,6 +17,7 @@ import com.reikyz.jandan.adapter.JokeDetailAdapter;
 import com.reikyz.jandan.adapter.PicDetailAdapter;
 import com.reikyz.jandan.async.ResponseSimpleNetTask;
 import com.reikyz.jandan.data.Config;
+import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.model.DuoshuoCommentModel;
 import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.presenter.BaseFragment;
@@ -25,6 +26,7 @@ import com.reikyz.jandan.utils.Utils;
 
 import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
+import org.simple.eventbus.Subscriber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +98,8 @@ public class JokeFragment extends BaseFragment {
 
             @Override
             protected void onFailure() {
-                Utils.showToast(getActivity(),"获取吐槽失败");
+                getComments();
+//                Utils.showToast(getActivity(),"获取吐槽失败");
             }
         }.execute();
     }
@@ -123,5 +126,11 @@ public class JokeFragment extends BaseFragment {
         adapter.setmHotPost(hotPost);
         adapter.notifyDataSetChanged();
 
+    }
+
+    @Subscriber(tag = EventConfig.REFRESH_JOKE_DETAIL)
+    void refreshJokeDetail(int i) {
+        Utils.log(TAG, "REFRESH_JOKE_DETAIL" + Utils.getLineNumber(new Exception()));
+        adapter.notifyDataSetChanged();
     }
 }

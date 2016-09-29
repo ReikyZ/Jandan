@@ -3,9 +3,6 @@ package com.reikyz.jandan.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-
-import com.reikyz.jandan.utils.Utils;
 
 /**
  * Created by reikyZ on 16/9/28.
@@ -119,7 +116,6 @@ public class VoteDAOImpl {
         }
         cursor.close();
         closeDb();
-        Utils.log(TAG, "getVoted ===" + post_id + "===status===" + vote);
         return vote;
     }
 
@@ -133,7 +129,6 @@ public class VoteDAOImpl {
                         "post_id = ?",
                 new String[]{String.valueOf(vote), post_id});
         closeDb();
-        Utils.log(TAG, "setVoted ===" + post_id + "===status===" + vote);
     }
 
 

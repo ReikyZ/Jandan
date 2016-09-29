@@ -144,6 +144,11 @@ public class WebPageFragment extends BaseFragment {
                 mPageHtml = JSON.parseObject(results, PageHtmlModel.class);
                 initWebView();
             }
+
+            @Override
+            protected void onFailure() {
+                getPage();
+            }
         }.execute();
     }
 

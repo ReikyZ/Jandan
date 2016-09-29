@@ -101,7 +101,9 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                 lv.setAdapter(newsAdapter);
 
                 results = Prefs.getString(Config.PRELOAD_NEWS);
+                Utils.log(TAG, "TRY GET NEWS CACHE" + Utils.getLineNumber(new Exception()));
                 if (results != null) {
+                    Utils.log(TAG, "NEWS CACHE====" + results + Utils.getLineNumber(new Exception()));
                     List<NewsModel> tmpNewsList = JSON.parseArray(results, NewsModel.class);
                     newsAdapter.refreshItems(tmpNewsList);
                 }
@@ -113,7 +115,9 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                 lv.setAdapter(jokeAdapter);
 
                 results = Prefs.getString(Config.PRELOAD_JOKE);
+                Utils.log(TAG, "TRY GET JOKE CACHE" + Utils.getLineNumber(new Exception()));
                 if (results != null) {
+                    Utils.log(TAG, "JOKE CACHE====" + results + Utils.getLineNumber(new Exception()));
                     List<GeneralPostModel> tmpNewsList = JSON.parseArray(results, GeneralPostModel.class);
                     jokeAdapter.refreshItems(tmpNewsList);
                 }
@@ -147,6 +151,7 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                         break;
                     case Config.FRAGMENT_JOKE:
                         if (MyApp.currentJokeIndex != null) {
+                            Utils.log(TAG, "onResume==" + Utils.getLineNumber(new Exception()));
                             lv.smoothScrollToPosition(MyApp.currentJokeIndex);
                             jokeAdapter.notifyDataSetChanged();
                         }
@@ -175,8 +180,16 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                 List<NewsModel> tmpNewsList = JSON.parseArray(results, NewsModel.class);
 
                 if (tmpNewsList.size() > 0) {
-                    if (page == 1) {
-                        Prefs.save(Config.PRELOAD_NEWS, results);
+                    if (page == 0) {
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("[");
+                        for (NewsModel newsModel : tmpNewsList) {
+                            if (sb.length() > 10)
+                                sb.append(",");
+                            sb.append(JSON.toJSONString(newsModel));
+                        }
+                        sb.append("]");
+                        Prefs.save(Config.PRELOAD_NEWS, sb.toString());
                         newsAdapter.refreshItems(tmpNewsList);
                     } else {
                         newsAdapter.addMoreItem(tmpNewsList);
@@ -221,6 +234,7 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
             protected void onSucceed(String result) throws Exception {
                 String results = JsonUtils.getString(new JSONObject(result), "comments");
                 tmpList = JSON.parseArray(results, GeneralPostModel.class);
+                Utils.log(TAG, results + Utils.getLineNumber(new Exception()));
 
                 StringBuilder sb = new StringBuilder();
                 if (tmpList.size() > 0)
@@ -259,12 +273,17 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                     model.setThread(thread);
                 }
 
+                StringBuilder sb = new StringBuilder();
+                sb.append("[");
+                for (GeneralPostModel post : tmpList) {
+                    if (sb.length() > 10)
+                        sb.append(",");
+                    sb.append(JSON.toJSONString(post));
+                }
+                sb.append("]");
                 if (tmpList.size() > 0) {
-                    if (mPage == 1) {
-                        Prefs.save(Config.PRELOAD_JOKE,
-                                tmpList.toString().replace("GeneralPostModel", "")
-                                        .replace("CommentThreadModel", "")
-                                        .replace("=", ":"));
+                    if (mPage == 0) {
+                        Prefs.save(Config.PRELOAD_JOKE, sb.toString());
                         jokeAdapter.refreshItems(tmpList);
                     } else {
                         jokeAdapter.addMoreItem(tmpList);
@@ -340,10 +359,22 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
         loadMore();
     }
 
+    @Subscriber(tag = EventConfig.REFRESH_JOKE_LIST)
+    void refreshJokeList(int i) {
+        Utils.log(TAG, "REFRESH_JOKE_LIST==" + Utils.getLineNumber(new Exception()));
+        switch (mType) {
+            case Config.FRAGMENT_NEWS:
+                break;
+            case Config.FRAGMENT_JOKE:
+                jokeAdapter.notifyDataSetChanged();
+                break;
+        }
+    }
+
     @Override
     public void refresh() {
 
-        mPage = 1;
+        mPage = 0;
         switch (mType) {
             case Config.FRAGMENT_NEWS:
                 getNews(mPage);
