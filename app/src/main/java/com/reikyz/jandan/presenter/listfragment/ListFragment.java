@@ -23,7 +23,7 @@ import com.reikyz.jandan.data.Prefs;
 import com.reikyz.jandan.model.CommentThreadModel;
 import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.model.NewsModel;
-import com.reikyz.jandan.presenter.BaseFragment;
+import com.reikyz.jandan.mvp.BaseFragment;
 import com.reikyz.jandan.utils.ShakeListener;
 import com.reikyz.jandan.utils.Utils;
 import com.reikyz.jandan.widget.LMListView;
@@ -48,9 +48,11 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
 
     Bundle mBundle;
     String mType;
-    Integer mPage = 0;
+    Integer mPage = 1;
     boolean isFirstIn = true;
     boolean getMore = true;
+    boolean fetchingNews = false;
+    boolean fetchingJoke = false;
 
     // Adapter
     NewsAdapter newsAdapter;
@@ -73,12 +75,9 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mBundle = getArguments();
         mType = mBundle.getString(Config.TYPE);
-
     }
-
 
     @Nullable
     @Override
@@ -107,7 +106,8 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                     List<NewsModel> tmpNewsList = JSON.parseArray(results, NewsModel.class);
                     newsAdapter.refreshItems(tmpNewsList);
                 }
-                getNews(mPage);
+                if (!fetchingNews)
+                    getNews(mPage);
                 break;
             case Config.FRAGMENT_JOKE:
                 MyApp.currentJokeIndex = null;
@@ -121,8 +121,8 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                     List<GeneralPostModel> tmpNewsList = JSON.parseArray(results, GeneralPostModel.class);
                     jokeAdapter.refreshItems(tmpNewsList);
                 }
-
-                getJoke(mPage);
+                if (!fetchingJoke)
+                    getJoke(mPage);
                 break;
         }
 
@@ -162,6 +162,7 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
     }
 
     private void getNews(final Integer page) {
+        fetchingNews = true;
         lv.loading();
         new ResponseSimpleNetTask(getActivity(), false, refreshLayout) {
             @Override
@@ -180,7 +181,7 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                 List<NewsModel> tmpNewsList = JSON.parseArray(results, NewsModel.class);
 
                 if (tmpNewsList.size() > 0) {
-                    if (page == 0) {
+                    if (page == 1) {
                         StringBuilder sb = new StringBuilder();
                         sb.append("[");
                         for (NewsModel newsModel : tmpNewsList) {
@@ -216,8 +217,8 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
         }.execute();
     }
 
-
     private void getJoke(final Integer page) {
+        fetchingJoke = true;
         lv.loading();
         new ResponseSimpleNetTask(getActivity(), false, refreshLayout) {
             @Override
@@ -282,7 +283,7 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                 }
                 sb.append("]");
                 if (tmpList.size() > 0) {
-                    if (mPage == 0) {
+                    if (mPage == 1) {
                         Prefs.save(Config.PRELOAD_JOKE, sb.toString());
                         jokeAdapter.refreshItems(tmpList);
                     } else {
@@ -294,13 +295,14 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
                 } else {
                     lv.noMore();
                 }
-
                 lv.loadComplete();
                 mPage++;
 
                 isFirstIn = false;
                 shakeActive = true;
 
+                fetchingNews = false;
+                fetchingJoke = false;
             }
 
             @Override
@@ -314,14 +316,10 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-
     }
-
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-
         if (lv.getChildAt(0) != null) {
             if (firstVisibleItem == 0 && lv.getChildAt(0).getTop() == 0) {
                 lv.setDataChangeListener(this);
@@ -374,13 +372,15 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
     @Override
     public void refresh() {
 
-        mPage = 0;
+        mPage = 1;
         switch (mType) {
             case Config.FRAGMENT_NEWS:
-                getNews(mPage);
+                if (!fetchingNews)
+                    getNews(mPage);
                 break;
             case Config.FRAGMENT_JOKE:
-                getJoke(mPage);
+                if (!fetchingJoke)
+                    getJoke(mPage);
                 break;
         }
     }
@@ -390,10 +390,12 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
         Utils.log(TAG, "loadMore==" + Utils.getLineNumber(new Exception()));
         switch (mType) {
             case Config.FRAGMENT_NEWS:
-                getNews(mPage);
+                if (!fetchingNews)
+                    getNews(mPage);
                 break;
             case Config.FRAGMENT_JOKE:
-                getJoke(mPage);
+                if (!fetchingJoke)
+                    getJoke(mPage);
                 break;
         }
     }
@@ -423,7 +425,6 @@ public class ListFragment extends BaseFragment implements LMListView.DataChangeL
             MyApp.currentJokeIndex = null;
         }
     }
-
 
     @Override
     public void onDestroy() {

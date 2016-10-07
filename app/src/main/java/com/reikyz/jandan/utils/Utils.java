@@ -2,13 +2,9 @@ package com.reikyz.jandan.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -24,7 +20,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewCompat;
 import android.telephony.TelephonyManager;
 import android.text.SpannableString;
@@ -47,7 +42,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.reikyz.jandan.presenter.main.MainActivity;
 import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.Prefs;
@@ -315,31 +309,6 @@ public class Utils {
     public static int getRandomColor() {
         Random rnd = new Random();
         return Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-    }
-
-    /**
-     * 发送notification
-     */
-    public static void setNotifyType(int iconId, String message, Context context) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        String title = "有一条饭团消息";
-        Intent notifyIntent;
-        if (null == MyApp.getCurrentActivity()) {
-            notifyIntent = new Intent(context, MainActivity.class);
-        } else {
-            notifyIntent = new Intent(context, MyApp.getCurrentActivity().getClass());
-        }
-        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, notifyIntent, 0);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        Notification notification = builder.setContentIntent(pendingIntent)
-                .setAutoCancel(true)
-                .setSmallIcon(iconId)
-                .setContentTitle(title)
-                .setTicker(message)
-                .setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS)
-                .setContentText(message).build();
-        notificationManager.notify(0, notification);
     }
 
     public static String attachString(String word, int value) {

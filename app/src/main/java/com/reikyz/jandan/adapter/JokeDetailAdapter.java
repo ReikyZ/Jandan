@@ -1,8 +1,6 @@
 package com.reikyz.jandan.adapter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,12 +17,10 @@ import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
 import com.reikyz.jandan.model.DuoshuoCommentModel;
 import com.reikyz.jandan.model.GeneralPostModel;
-import com.reikyz.jandan.presenter.ShowPicActivity;
 import com.reikyz.jandan.utils.BitmapUtils;
 import com.reikyz.jandan.utils.DentistyConvert;
 import com.reikyz.jandan.utils.TimeUtils;
 import com.reikyz.jandan.utils.Utils;
-import com.reikyz.jandan.widget.CircleProgressBar;
 
 import org.simple.eventbus.EventBus;
 

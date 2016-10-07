@@ -1,7 +1,6 @@
 package com.reikyz.jandan.presenter.menuleftfragment;
 
 import android.os.Bundle;
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,6 +11,7 @@ import com.makeramen.roundedimageview.RoundedImageView;
 import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.EventConfig;
+import com.reikyz.jandan.mvp.MenuLeftContract;
 import com.reikyz.jandan.utils.BitmapUtils;
 import com.reikyz.jandan.utils.FontUtils;
 import com.reikyz.jandan.utils.TimeUtils;
@@ -20,7 +20,6 @@ import com.reikyz.jandan.widget.FlipDotView;
 
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
-import org.simple.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +28,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MenuLeftFragment extends Fragment implements MenuLeftContract.View {
+public class MenuLeftFragment extends Fragment {
 
     final static String TAG = "==MenuLeftFragment==";
-
-    MenuLeftContract.Presenter mPresenter;
 
     View view;
 
@@ -117,10 +114,6 @@ public class MenuLeftFragment extends Fragment implements MenuLeftContract.View 
     }
 
 
-    public static MenuLeftFragment newInstance() {
-        return new MenuLeftFragment();
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -128,11 +121,6 @@ public class MenuLeftFragment extends Fragment implements MenuLeftContract.View 
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
         return view;
-    }
-
-    @Override
-    public void setPresenter(@NonNull MenuLeftContract.Presenter presenter) {
-        mPresenter = presenter;
     }
 
     @Override

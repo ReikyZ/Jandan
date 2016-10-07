@@ -1,10 +1,8 @@
 package com.reikyz.jandan.presenter.flowfragment;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -23,7 +21,7 @@ import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
 import com.reikyz.jandan.model.CommentThreadModel;
 import com.reikyz.jandan.model.GeneralPostModel;
-import com.reikyz.jandan.presenter.BaseFragment;
+import com.reikyz.jandan.mvp.BaseFragment;
 import com.reikyz.jandan.utils.ShakeListener;
 import com.reikyz.jandan.utils.Utils;
 import com.reikyz.jandan.widget.LMRecycleView;
@@ -51,6 +49,7 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
     Integer mPage = 1;
     boolean isFirstIn = true;
     boolean getMore = true;
+    boolean fetching = false;
 
     private DisplayMetrics metrics;
     // Adapter
@@ -101,7 +100,6 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
                 results = Prefs.getString(Config.PRELOAD_FUN_PIC);
                 if (results != null) {
                     List<GeneralPostModel> tmpNewsList = JSON.parseArray(results, GeneralPostModel.class);
-                    MyApp.funPicList = tmpNewsList;
                     adapter.refreshItems(tmpNewsList, getMore);
                 }
                 break;
@@ -117,9 +115,7 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
                 results = Prefs.getString(Config.PRELOAD_GIRL_PIC);
 
                 if (results != null) {
-                    Utils.log(TAG, results.substring(710, 720));
                     List<GeneralPostModel> tmpNewsList = JSON.parseArray(results, GeneralPostModel.class);
-                    MyApp.girlPicLIst = tmpNewsList;
                     adapter.refreshItems(tmpNewsList, getMore);
                 }
                 break;
@@ -151,7 +147,8 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getData(mPage);
+        if (!fetching)
+            getData(mPage);
     }
 
     ShakeListener shakeListener;
@@ -161,7 +158,6 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
         super.onResume();
         shakeListener = new ShakeListener(getActivity());
         shakeListener.setOnShakeListener(this);
-        Utils.log(TAG, "onResume" + Utils.getLineNumber(new Exception()));
         switch (mType) {
             case Config.FUN_PIC:
                 MyApp.updateFunCilently = true;
@@ -194,6 +190,7 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
 
 
     private void getData(final Integer page) {
+        fetching = true;
         recyclerView.setLoading(true);
 
         if (page > 1)
@@ -284,12 +281,12 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
                                 Prefs.save(Config.PRELOAD_GIRL_PIC, sb.toString());
                                 break;
                         }
-
-
                     } else {
                         filterEmptyVideo();
                         adapter.addMoreItem(tmpList, getMore);
                     }
+                    Utils.log(TAG, "fun pic size==" + MyApp.funPicList.size() + Utils.getLineNumber(new Exception()));
+                    Utils.log(TAG, "girl pic size==" + MyApp.girlPicLIst.size() + Utils.getLineNumber(new Exception()));
                     EventBus.getDefault().post(0, EventConfig.PICS_CHANGED);
                     getMore = true;
                 }
@@ -302,11 +299,11 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
                 EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO);
                 EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO_TOP);
 
+                fetching = false;
             }
 
             @Override
             protected void onFailure() {
-                Utils.log(TAG, Utils.getLineNumber(new Exception()));
                 EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO);
                 EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO_TOP);
                 getComment(threads);
@@ -339,12 +336,14 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
     @Override
     public void refresh() {
         mPage = 1;
-        getData(mPage);
+        if (!fetching)
+            getData(mPage);
     }
 
     @Override
     public void loadMore() {
-        getData(mPage);
+        if (!fetching)
+            getData(mPage);
     }
 
     boolean shakeActive = true;
@@ -366,7 +365,6 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
     @Override
     public void onPause() {
         super.onPause();
-        Utils.log(TAG, "onPause" + Utils.getLineNumber(new Exception()));
         switch (mType) {
             case Config.FUN_PIC:
                 MyApp.updateFunCilently = false;

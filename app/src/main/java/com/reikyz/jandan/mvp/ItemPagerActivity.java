@@ -1,4 +1,4 @@
-package com.reikyz.jandan.presenter.itempager;
+package com.reikyz.jandan.mvp;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,10 +10,10 @@ import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
-import com.reikyz.jandan.presenter.BaseActivity;
-import com.reikyz.jandan.presenter.jokefragment.JokeFragment;
-import com.reikyz.jandan.presenter.newsdetailfragment.WebPageFragment;
-import com.reikyz.jandan.presenter.picfragment.PicFragment;
+import com.reikyz.jandan.mvp.BaseActivity;
+import com.reikyz.jandan.mvp.JokeFragment;
+import com.reikyz.jandan.mvp.WebPageFragment;
+import com.reikyz.jandan.mvp.PicFragment;
 import com.reikyz.jandan.utils.Utils;
 
 import org.simple.eventbus.EventBus;
@@ -83,7 +83,7 @@ public class ItemPagerActivity extends BaseActivity {
             }
         };
         viewPager.setAdapter(adapter);
-
+        Utils.log(TAG, "Index==" + mIndex + "==total==" + adapter.getCount() + Utils.getLineNumber(new Exception()));
         viewPager.setCurrentItem(mIndex);
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -109,7 +109,6 @@ public class ItemPagerActivity extends BaseActivity {
                     case Config.FUN_PIC:
                         MyApp.currentFunPicIndex = position;
                         if (MyApp.funPicList.size() - position < 5) {
-                            Utils.log(TAG, Utils.getLineNumber(new Exception()));
                             EventBus.getDefault().post(0, EventConfig.LOAD_MORE_FLOW);
                         }
                         break;
@@ -146,7 +145,7 @@ public class ItemPagerActivity extends BaseActivity {
 
     @Subscriber(tag = EventConfig.PICS_CHANGED)
     void picsChanged(int i) {
-        Utils.log(TAG, Utils.getLineNumber(new Exception()));
+        Utils.log(TAG, mType + "==total==" + adapter.getCount() + Utils.getLineNumber(new Exception()));
         adapter.notifyDataSetChanged();
     }
 

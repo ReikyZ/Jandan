@@ -25,11 +25,11 @@
         </activity>
 
         <activity
-            android:name=".presenter.itempager.ItemPagerActivity"
+            android:name=".mvp.ItemPagerActivity"
             android:hardwareAccelerated="false"
             android:screenOrientation="portrait" />
 
-        <activity android:name=".presenter.ShowPicActivity" />
+        <activity android:name=".mvp.ShowPicActivity" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

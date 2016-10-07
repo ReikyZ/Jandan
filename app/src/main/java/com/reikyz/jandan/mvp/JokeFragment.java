@@ -1,4 +1,4 @@
-package com.reikyz.jandan.presenter.jokefragment;
+package com.reikyz.jandan.mvp;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,14 +14,11 @@ import com.reikyz.api.utils.JsonUtils;
 import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.adapter.JokeDetailAdapter;
-import com.reikyz.jandan.adapter.PicDetailAdapter;
 import com.reikyz.jandan.async.ResponseSimpleNetTask;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.model.DuoshuoCommentModel;
 import com.reikyz.jandan.model.GeneralPostModel;
-import com.reikyz.jandan.presenter.BaseFragment;
-import com.reikyz.jandan.presenter.picfragment.PicFragment;
 import com.reikyz.jandan.utils.Utils;
 
 import org.json.JSONObject;

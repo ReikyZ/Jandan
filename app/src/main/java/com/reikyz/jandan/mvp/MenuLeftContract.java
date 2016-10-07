@@ -1,7 +1,7 @@
-package com.reikyz.jandan.presenter.menuleftfragment;
+package com.reikyz.jandan.mvp;
 
-import com.reikyz.jandan.presenter.BasePresenter;
-import com.reikyz.jandan.presenter.BaseView;
+import com.reikyz.jandan.mvp.BasePresenter;
+import com.reikyz.jandan.mvp.BaseView;
 
 /**
  * Created by reikyZ on 16/8/23.

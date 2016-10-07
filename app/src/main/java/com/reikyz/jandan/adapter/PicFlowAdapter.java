@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.utils.BitmapUtils;
+import com.reikyz.jandan.utils.Utils;
 import com.reikyz.jandan.widget.PicCardView;
 
 import java.util.List;
@@ -73,6 +74,7 @@ public class PicFlowAdapter extends RecyclerView.Adapter {
         preLoad(items);
         this.hasMore = hasMore;
         this.itemList.addAll(items);
+        Utils.log(TAG, "type==" + mType + "==new pics size==" + itemList.size() + Utils.getLineNumber(new Exception()));
         notifyDataSetChanged();
     }
 
@@ -82,7 +84,7 @@ public class PicFlowAdapter extends RecyclerView.Adapter {
             if (pic.getPics() != null &&
                     pic.getPics().size() > 0 &&
                     pic.getPics().get(0) != null)
-                BitmapUtils.showJpg(context,pic.getPics().get(0), preLoadIV);
+                BitmapUtils.showJpg(context, pic.getPics().get(0), preLoadIV);
         }
     }
 

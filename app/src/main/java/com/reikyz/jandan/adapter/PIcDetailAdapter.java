@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.reikyz.api.model.ApiResponse;
@@ -20,7 +19,7 @@ import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
 import com.reikyz.jandan.model.DuoshuoCommentModel;
 import com.reikyz.jandan.model.GeneralPostModel;
-import com.reikyz.jandan.presenter.ShowPicActivity;
+import com.reikyz.jandan.mvp.ShowPicActivity;
 import com.reikyz.jandan.utils.BitmapUtils;
 import com.reikyz.jandan.utils.DentistyConvert;
 import com.reikyz.jandan.utils.TimeUtils;
@@ -127,11 +126,9 @@ public class PicDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
 
                 ivPic.setImageDrawable(null);
                 if (mPostModel.getPics().get(position).indexOf(".gif") > 0) {
-                    Utils.log(TAG, "show GIF" + Utils.getLineNumber(new Exception()));
                     BitmapUtils.playGif(context, mPostModel.getPics().get(position), ivPic);
                     ivPic.setOnClickListener(null);
                 } else {
-                    Utils.log(TAG, "show JPG" + Utils.getLineNumber(new Exception()));
                     BitmapUtils.showJpg(context, mPostModel.getPics().get(position), ivPic);
                     ivPic.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -369,7 +366,6 @@ public class PicDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
 
     private int checkVoted(String post_id) {
         int result = MyApp.voteDAO.getVoted(post_id);
-        Utils.log(TAG, post_id + "===" + result + Utils.getLineNumber(new Exception()));
         return result;
     }
 
@@ -394,7 +390,6 @@ public class PicDetailAdapter extends BaseListAdapter<DuoshuoCommentModel> {
                 } else
                     Prefs.save(Config.COOKIE, cookie + ";voted_comments_" + mPostModel.getComment_ID() + "=" + voted);
 
-                Utils.log(TAG, cookie + "==" + result + Utils.getLineNumber(new Exception()));
                 EventBus.getDefault().post(0, EventConfig.REFRESH_PIC_DETAIL);
             }
 

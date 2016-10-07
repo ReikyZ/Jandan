@@ -1,4 +1,4 @@
-package com.reikyz.jandan.presenter.picfragment;
+package com.reikyz.jandan.mvp;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,14 +19,12 @@ import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.model.DuoshuoCommentModel;
 import com.reikyz.jandan.model.GeneralPostModel;
-import com.reikyz.jandan.presenter.BaseFragment;
 import com.reikyz.jandan.utils.Utils;
 
 import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +37,7 @@ public class PicFragment extends BaseFragment {
     String mType;
     private GeneralPostModel mPost;
     private Integer mIndex;
+    boolean fetching = false;
 
     public static Fragment newInstance(String type, Integer position) {
         Bundle bundle = new Bundle();
@@ -78,7 +77,6 @@ public class PicFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Utils.log(TAG, this.hashCode() + Utils.getLineNumber(new Exception()));
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
 
         lv = (ListView) view.findViewById(R.id.lv);
@@ -101,6 +99,7 @@ public class PicFragment extends BaseFragment {
 //        }
         adapter = new PicDetailAdapter(getActivity(), duoshuoComments, mPost);
         lv.setAdapter(adapter);
+
 
         getComments();
 

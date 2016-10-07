@@ -1,8 +1,8 @@
-package com.reikyz.jandan.presenter.main;
+package com.reikyz.jandan.mvp;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
 
+import com.reikyz.jandan.mvp.MainContract;
 import com.reikyz.jandan.utils.Utils;
 
 import org.simple.eventbus.EventBus;
@@ -11,7 +11,6 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
 import butterknife.ButterKnife;
-import io.fabric.sdk.android.services.concurrency.Task;
 
 /**
  * Created by reikyZ on 16/8/17.

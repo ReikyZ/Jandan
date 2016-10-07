@@ -2,7 +2,6 @@ package com.reikyz.jandan.presenter.main;
 
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -19,11 +18,9 @@ import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
-import com.reikyz.jandan.presenter.BaseActivity;
-import com.reikyz.jandan.presenter.BaseFragment;
+import com.reikyz.jandan.mvp.BaseActivity;
 import com.reikyz.jandan.presenter.flowfragment.FlowFragment;
 import com.reikyz.jandan.presenter.listfragment.ListFragment;
-import com.reikyz.jandan.utils.FontUtils;
 import com.reikyz.jandan.utils.Utils;
 import com.reikyz.jandan.widget.CircleProgressBar;
 

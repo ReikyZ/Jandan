@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.reikyz.api.model.ApiResponse;
@@ -20,9 +19,8 @@ import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
 import com.reikyz.jandan.model.GeneralPostModel;
-import com.reikyz.jandan.presenter.itempager.ItemPagerActivity;
+import com.reikyz.jandan.mvp.ItemPagerActivity;
 import com.reikyz.jandan.utils.BitmapUtils;
-import com.reikyz.jandan.utils.DentistyConvert;
 import com.reikyz.jandan.utils.TimeUtils;
 import com.reikyz.jandan.utils.Utils;
 
@@ -30,8 +28,6 @@ import org.simple.eventbus.EventBus;
 
 import java.text.ParseException;
 import java.util.List;
-
-import static android.R.attr.type;
 
 /**
  * Created by reikyZ on 16/8/23.
