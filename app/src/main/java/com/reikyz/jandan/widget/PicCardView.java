@@ -20,7 +20,7 @@ import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
 import com.reikyz.jandan.model.GeneralPostModel;
-import com.reikyz.jandan.mvp.ItemPagerActivity;
+import com.reikyz.jandan.mvp.activity.itemPager.ItemPagerActivity;
 import com.reikyz.jandan.utils.BitmapUtils;
 import com.reikyz.jandan.utils.DentistyConvert;
 import com.reikyz.jandan.utils.TimeUtils;

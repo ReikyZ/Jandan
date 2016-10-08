@@ -14,7 +14,7 @@ import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.model.NewsModel;
-import com.reikyz.jandan.mvp.ItemPagerActivity;
+import com.reikyz.jandan.mvp.activity.itemPager.ItemPagerActivity;
 import com.reikyz.jandan.utils.BitmapUtils;
 import com.reikyz.jandan.utils.Utils;
 

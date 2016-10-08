@@ -1,4 +1,4 @@
-package com.reikyz.jandan.presenter.flowfragment;
+package com.reikyz.jandan.mvp.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,7 +21,7 @@ import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
 import com.reikyz.jandan.model.CommentThreadModel;
 import com.reikyz.jandan.model.GeneralPostModel;
-import com.reikyz.jandan.mvp.BaseFragment;
+import com.reikyz.jandan.mvp.base.BaseFragment;
 import com.reikyz.jandan.utils.ShakeListener;
 import com.reikyz.jandan.utils.Utils;
 import com.reikyz.jandan.widget.LMRecycleView;

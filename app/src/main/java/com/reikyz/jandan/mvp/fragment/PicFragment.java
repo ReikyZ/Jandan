@@ -1,4 +1,4 @@
-package com.reikyz.jandan.mvp;
+package com.reikyz.jandan.mvp.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,13 +13,13 @@ import com.reikyz.api.model.ApiResponse;
 import com.reikyz.api.utils.JsonUtils;
 import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
-import com.reikyz.jandan.adapter.JokeDetailAdapter;
+import com.reikyz.jandan.adapter.PicDetailAdapter;
 import com.reikyz.jandan.async.ResponseSimpleNetTask;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.model.DuoshuoCommentModel;
 import com.reikyz.jandan.model.GeneralPostModel;
-import com.reikyz.jandan.utils.Utils;
+import com.reikyz.jandan.mvp.base.BaseFragment;
 
 import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
@@ -29,22 +29,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by reikyZ on 16/9/29.
+ * Created by reikyZ on 16/9/6.
  */
+public class PicFragment extends BaseFragment {
+    final String TAG = "==PicFragment==";
 
-public class JokeFragment extends BaseFragment {
-    final String TAG = "==JokeFragment==";
-
+    String mType;
     private GeneralPostModel mPost;
     private Integer mIndex;
+    boolean fetching = false;
 
-
-    public static Fragment newInstance(Integer position) {
+    public static Fragment newInstance(String type, Integer position) {
         Bundle bundle = new Bundle();
+        bundle.putString(Config.TYPE, type);
         bundle.putInt(Config.INDEX, position);
-        JokeFragment jokeFragment = new JokeFragment();
-        jokeFragment.setArguments(bundle);
-        return jokeFragment;
+        PicFragment picFragment = new PicFragment();
+        picFragment.setArguments(bundle);
+
+        return picFragment;
     }
 
 
@@ -54,32 +56,56 @@ public class JokeFragment extends BaseFragment {
 
         EventBus.getDefault().register(this);
 
+        mType = getArguments().getString(Config.TYPE);
         mIndex = getArguments().getInt(Config.INDEX);
 
-        mPost = MyApp.jokeList.get(mIndex);
+//        MyApp.currentNewsIndex = mIndex;
+        switch (mType) {
+            case Config.FUN_PIC:
+                mPost = MyApp.funPicList.get(mIndex);
+                break;
+            case Config.GIRL_PIC:
+                mPost = MyApp.girlPicLIst.get(mIndex);
+                break;
+        }
+
     }
 
-
     ListView lv;
-    JokeDetailAdapter adapter;
-
+    PicDetailAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Utils.log(TAG, this.hashCode() + Utils.getLineNumber(new Exception()));
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
 
         lv = (ListView) view.findViewById(R.id.lv);
         lv.setDivider(null);
 
-        adapter = new JokeDetailAdapter(getActivity(), duoshuoComments, mPost);
+//        ivPic = (ImageView) view.findViewById(R.id.iv_pic);
+//        progressBar = (CircleProgressBar) view.findViewById(R.id.proBar);
+//        progressBar.setColorSchemeResources(R.color.red, R.color.yellow, R.color.blue);
+////        progressBar.setVisibility(View.INVISIBLE);
+//
+//
+//        ivPic.setImageDrawable(null);
+//        if (mPost.getPics().get(0).indexOf(".gif") > 0) {
+//            Utils.log(TAG, "show GIF" + Utils.getLineNumber(new Exception()));
+//            BitmapUtils.playGif(getActivity(), mPost.getPics().get(0), ivPic);
+//        } else {
+//            Utils.log(TAG, "show JPG" + Utils.getLineNumber(new Exception()));
+////            BitmapUtils.displayImageWithAnim(mPost.getPics().get(0), ivPic);
+//            BitmapUtils.showJpg(getActivity(), mPost.getPics().get(0), ivPic);
+//        }
+        adapter = new PicDetailAdapter(getActivity(), duoshuoComments, mPost);
         lv.setAdapter(adapter);
+
 
         getComments();
 
         return view;
     }
+
 
     private void getComments() {
         new ResponseSimpleNetTask(getActivity(), false) {
@@ -125,9 +151,9 @@ public class JokeFragment extends BaseFragment {
 
     }
 
-    @Subscriber(tag = EventConfig.REFRESH_JOKE_DETAIL)
-    void refreshJokeDetail(int i) {
-        Utils.log(TAG, "REFRESH_JOKE_DETAIL" + Utils.getLineNumber(new Exception()));
+
+    @Subscriber(tag = EventConfig.REFRESH_PIC_DETAIL)
+    void refreshPicDetail(int i) {
         adapter.notifyDataSetChanged();
     }
 }

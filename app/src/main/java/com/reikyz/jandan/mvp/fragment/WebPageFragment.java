@@ -1,4 +1,4 @@
-package com.reikyz.jandan.mvp;
+package com.reikyz.jandan.mvp.fragment;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -22,6 +22,7 @@ import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.model.NewsModel;
 import com.reikyz.jandan.model.PageHtmlModel;
+import com.reikyz.jandan.mvp.base.BaseFragment;
 import com.reikyz.jandan.utils.Utils;
 
 import org.json.JSONObject;

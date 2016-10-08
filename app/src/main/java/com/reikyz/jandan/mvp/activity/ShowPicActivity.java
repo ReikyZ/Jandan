@@ -1,4 +1,4 @@
-package com.reikyz.jandan.mvp;
+package com.reikyz.jandan.mvp.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.Config;
+import com.reikyz.jandan.mvp.base.BaseActivity;
 import com.reikyz.jandan.widget.ZoomImageView;
 
 /**

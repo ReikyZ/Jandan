@@ -47,7 +47,6 @@
 
     <fragment
         android:id="@+id/id_left_menu"
-        android:name="com.reikyz.jandan.presenter.menuleftfragment.MenuLeftFragment"
         android:layout_width="200dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"

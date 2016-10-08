@@ -1,4 +1,4 @@
-package com.reikyz.jandan.mvp;
+package com.reikyz.jandan.mvp.activity.itemPager;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,10 +10,10 @@ import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
-import com.reikyz.jandan.mvp.BaseActivity;
-import com.reikyz.jandan.mvp.JokeFragment;
-import com.reikyz.jandan.mvp.WebPageFragment;
-import com.reikyz.jandan.mvp.PicFragment;
+import com.reikyz.jandan.mvp.fragment.JokeFragment;
+import com.reikyz.jandan.mvp.fragment.PicFragment;
+import com.reikyz.jandan.mvp.fragment.WebPageFragment;
+import com.reikyz.jandan.mvp.base.BaseActivity;
 import com.reikyz.jandan.utils.Utils;
 
 import org.simple.eventbus.EventBus;

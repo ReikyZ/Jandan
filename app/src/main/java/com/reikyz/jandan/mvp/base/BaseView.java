@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.reikyz.jandan.mvp;
+package com.reikyz.jandan.mvp.base;
 
 public interface BaseView<T> {
 

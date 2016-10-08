@@ -1,4 +1,4 @@
-package com.reikyz.jandan.mvp;
+package com.reikyz.jandan.mvp.base;
 
 import android.app.Activity;
 import android.os.Bundle;

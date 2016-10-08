@@ -1,4 +1,4 @@
-package com.reikyz.jandan.mvp;
+package com.reikyz.jandan.mvp.base;
 
 /**
  * Created by reikyZ on 16/8/17.
