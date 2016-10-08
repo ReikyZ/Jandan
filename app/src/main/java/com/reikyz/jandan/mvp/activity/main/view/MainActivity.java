@@ -18,9 +18,11 @@ import com.reikyz.jandan.R;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
-import com.reikyz.jandan.mvp.fragment.FlowFragment;
-import com.reikyz.jandan.mvp.fragment.ListFragment;
+import com.reikyz.jandan.mvp.activity.main.presenter.MainPresenter;
+import com.reikyz.jandan.mvp.activity.main.presenter.MainPresenterImpl;
 import com.reikyz.jandan.mvp.base.BaseActivity;
+import com.reikyz.jandan.mvp.fragment.flow.view.FlowFragment;
+import com.reikyz.jandan.mvp.fragment.list.view.ListFragment;
 import com.reikyz.jandan.utils.Utils;
 import com.reikyz.jandan.widget.CircleProgressBar;
 
@@ -34,12 +36,14 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements MainView {
 
     final String TAG = "==MainActivity==";
 
     private DrawerLayout mDrawerLayout;
     private DaliBlurDrawerToggle mDrawerToggle;
+
+    private MainPresenter mMainPresenter;
 
     @Bind(R.id.proBar)
     CircleProgressBar progressBar;
@@ -54,8 +58,10 @@ public class MainActivity extends BaseActivity {
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
 
+        mMainPresenter = new MainPresenterImpl(this);
+
         // init Main Fragment
-        initFragment(savedInstanceState);
+        mMainPresenter.initFragment(savedInstanceState);
 
         // 抽屉菜单
         initView();
@@ -102,7 +108,8 @@ public class MainActivity extends BaseActivity {
     FragmentManager fragmentManager;
     Fragment newsFragment, funPicFragment, girlPicFragment, jokeFragment, videoFragment;
 
-    private void initFragment(Bundle savedInstanceState) {
+    @Override
+    public void initFragment(Bundle savedInstanceState) {
         fragmentManager = getSupportFragmentManager();
         if (savedInstanceState == null) {
             setSelect(0);
@@ -115,8 +122,8 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
-    private void setSelect(int checkedId) {
+    @Override
+    public void setSelect(int checkedId) {
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Utils.hideFragment(fragmentManager, fragmentTransaction);
@@ -251,8 +258,9 @@ public class MainActivity extends BaseActivity {
 
     @Subscriber(tag = EventConfig.CLOASE_DRAWER)
     void closeDrawer(int i) {
-        if (i < 5)
-            setSelect(i);
+        if (i < 5) {
+            mMainPresenter.setSelect(i);
+        }
         mDrawerLayout.closeDrawer(Gravity.LEFT);
     }
 

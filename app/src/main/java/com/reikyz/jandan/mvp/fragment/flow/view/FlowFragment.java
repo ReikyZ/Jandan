@@ -1,5 +1,6 @@
-package com.reikyz.jandan.mvp.fragment;
+package com.reikyz.jandan.mvp.fragment.flow.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -10,22 +11,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.alibaba.fastjson.JSON;
-import com.reikyz.api.model.ApiResponse;
 import com.reikyz.api.utils.JsonUtils;
 import com.reikyz.jandan.MyApp;
 import com.reikyz.jandan.R;
 import com.reikyz.jandan.adapter.PicFlowAdapter;
-import com.reikyz.jandan.async.ResponseSimpleNetTask;
 import com.reikyz.jandan.data.Config;
 import com.reikyz.jandan.data.EventConfig;
 import com.reikyz.jandan.data.Prefs;
 import com.reikyz.jandan.model.CommentThreadModel;
 import com.reikyz.jandan.model.GeneralPostModel;
 import com.reikyz.jandan.mvp.base.BaseFragment;
+import com.reikyz.jandan.mvp.fragment.flow.presenter.FlowPresenter;
+import com.reikyz.jandan.mvp.fragment.flow.presenter.FlowPresenterImpl;
 import com.reikyz.jandan.utils.ShakeListener;
 import com.reikyz.jandan.utils.Utils;
 import com.reikyz.jandan.widget.LMRecycleView;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.simple.eventbus.EventBus;
 import org.simple.eventbus.Subscriber;
@@ -40,7 +42,7 @@ import butterknife.ButterKnife;
 /**
  * Created by reikyZ on 16/8/23.
  */
-public class FlowFragment extends BaseFragment implements LMRecycleView.DataChangeListener, ShakeListener.OnShakeListener {
+public class FlowFragment extends BaseFragment implements LMRecycleView.DataChangeListener, ShakeListener.OnShakeListener, FlowView {
 
     final String TAG = "==FlowFragment==";
 
@@ -55,6 +57,7 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
     // Adapter
     PicFlowAdapter adapter;
     List<GeneralPostModel> tmpList = new ArrayList<>();
+    FlowPresenter mFlowPresenter;
 
     @Bind(R.id.refreshLayout)
     SwipeRefreshLayout refreshLayout;
@@ -76,9 +79,10 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
         mBundle = getArguments();
         mType = mBundle.getString(Config.TYPE);
 
+        mFlowPresenter = new FlowPresenterImpl(this);
     }
 
-    String results;
+    String preLoadStr;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -86,6 +90,12 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
         ButterKnife.bind(this, view);
         EventBus.getDefault().register(this);
 
+        mFlowPresenter.initFlow();
+        return view;
+    }
+
+    @Override
+    public void initFlow() {
         StaggeredGridLayoutManager sglm;
 
         switch (mType) {
@@ -97,9 +107,9 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
 
                 adapter = new PicFlowAdapter(getActivity(), MyApp.funPicList, refreshLayout, mType);
 
-                results = Prefs.getString(Config.PRELOAD_FUN_PIC);
-                if (results != null) {
-                    List<GeneralPostModel> tmpNewsList = JSON.parseArray(results, GeneralPostModel.class);
+                preLoadStr = Prefs.getString(Config.PRELOAD_FUN_PIC);
+                if (preLoadStr != null) {
+                    List<GeneralPostModel> tmpNewsList = JSON.parseArray(preLoadStr, GeneralPostModel.class);
                     adapter.refreshItems(tmpNewsList, getMore);
                 }
                 break;
@@ -112,10 +122,10 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
 
                 adapter = new PicFlowAdapter(getActivity(), MyApp.girlPicLIst, refreshLayout, mType);
 
-                results = Prefs.getString(Config.PRELOAD_GIRL_PIC);
+                preLoadStr = Prefs.getString(Config.PRELOAD_GIRL_PIC);
 
-                if (results != null) {
-                    List<GeneralPostModel> tmpNewsList = JSON.parseArray(results, GeneralPostModel.class);
+                if (preLoadStr != null) {
+                    List<GeneralPostModel> tmpNewsList = JSON.parseArray(preLoadStr, GeneralPostModel.class);
                     adapter.refreshItems(tmpNewsList, getMore);
                 }
                 break;
@@ -128,7 +138,6 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
                 adapter = new PicFlowAdapter(getActivity(), MyApp.videoLIst, refreshLayout, mType);
                 break;
         }
-//        recyclerView.addItemDecoration(new SpacesItemDecoration(5));
 
         recyclerView.setAdapter(adapter);
 
@@ -139,7 +148,6 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
         recyclerView.setDataChangeListener(this);
         recyclerView.setFocusable(false);
         refreshLayout.setEnabled(true);
-        return view;
     }
 
 
@@ -148,16 +156,13 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
         super.onActivityCreated(savedInstanceState);
 
         if (!fetching)
-            getData(mPage);
+            getData(getActivity(), refreshLayout, mPage);
     }
-
-    ShakeListener shakeListener;
 
     @Override
     public void onResume() {
         super.onResume();
-        shakeListener = new ShakeListener(getActivity());
-        shakeListener.setOnShakeListener(this);
+        registerShakeListener();
         switch (mType) {
             case Config.FUN_PIC:
                 MyApp.updateFunCilently = true;
@@ -188,127 +193,11 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
         }, 200);
     }
 
-
-    private void getData(final Integer page) {
+    private void getData(final Context context, final SwipeRefreshLayout refreshLayout, final Integer page) {
         fetching = true;
         recyclerView.setLoading(true);
 
-        if (page > 1)
-            EventBus.getDefault().post(View.VISIBLE, EventConfig.SHOW_GLOBAL_PRO);
-        else if (isFirstIn)
-            EventBus.getDefault().post(View.VISIBLE, EventConfig.SHOW_GLOBAL_PRO_TOP);
-
-        new ResponseSimpleNetTask(getActivity(), false, refreshLayout) {
-            @Override
-            protected ApiResponse doInBack() throws Exception {
-                switch (mType) {
-                    case Config.FUN_PIC:
-                        return api.generalApi(
-                                Config.API_GET_FUN_PICS, null, page, null, null, null);
-                    case Config.GIRL_PIC:
-                        return api.generalApi(
-                                Config.API_GET_GIRL_PIS, null, page, null, null, null);
-                    case Config.VIDEO:
-                        return api.generalApi(
-                                Config.API_GET_VIDEOS, null, page, null, null, null);
-
-                }
-                return null;
-            }
-
-            @Override
-            protected void onSucceed(String result) throws Exception {
-                String results = JsonUtils.getString(new JSONObject(result), "comments");
-                tmpList = JSON.parseArray(results, GeneralPostModel.class);
-
-                StringBuilder sb = new StringBuilder();
-                if (tmpList.size() > 0)
-                    sb.append("comment-" + tmpList.get(0).getComment_ID());
-
-                for (int i = 1; i < tmpList.size(); i++) {
-                    sb.append(",");
-                    sb.append("comment-" + tmpList.get(i).getComment_ID());
-                }
-                getComment(sb.toString());
-
-            }
-
-            @Override
-            protected void onFailure() {
-                EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO);
-                EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO_TOP);
-                getData(page);
-            }
-        }.execute();
-    }
-
-    private void getComment(final String threads) {
-        new ResponseSimpleNetTask(getActivity(), false) {
-            @Override
-            protected ApiResponse doInBack() throws Exception {
-                return api.getDuoshuo(threads);
-            }
-
-            @Override
-            protected void onSucceed(String result) throws Exception {
-                String results = JsonUtils.getString(new JSONObject(result), "response");
-
-                for (GeneralPostModel model : tmpList) {
-                    String threadStr = JsonUtils.getString(new JSONObject(results), "comment-" + model.getComment_ID());
-                    CommentThreadModel thread = JSON.parseObject(threadStr, CommentThreadModel.class);
-                    model.setThread(thread);
-                }
-
-                if (tmpList.size() > 0) {
-                    if (mPage == 1) {
-                        filterEmptyVideo();
-                        adapter.refreshItems(tmpList, getMore);
-
-
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("[");
-                        for (GeneralPostModel post : tmpList) {
-                            if (sb.length() > 10)
-                                sb.append(",");
-                            sb.append(JSON.toJSONString(post));
-                        }
-                        sb.append("]");
-                        switch (mType) {
-                            case Config.FUN_PIC:
-                                Prefs.save(Config.PRELOAD_FUN_PIC, sb.toString());
-                                break;
-                            case Config.GIRL_PIC:
-                                Prefs.save(Config.PRELOAD_GIRL_PIC, sb.toString());
-                                break;
-                        }
-                    } else {
-                        filterEmptyVideo();
-                        adapter.addMoreItem(tmpList, getMore);
-                    }
-                    Utils.log(TAG, "fun pic size==" + MyApp.funPicList.size() + Utils.getLineNumber(new Exception()));
-                    Utils.log(TAG, "girl pic size==" + MyApp.girlPicLIst.size() + Utils.getLineNumber(new Exception()));
-                    EventBus.getDefault().post(0, EventConfig.PICS_CHANGED);
-                    getMore = true;
-                }
-
-                mPage++;
-
-                isFirstIn = false;
-                shakeActive = true;
-                recyclerView.setLoading(false);
-                EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO);
-                EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO_TOP);
-
-                fetching = false;
-            }
-
-            @Override
-            protected void onFailure() {
-                EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO);
-                EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO_TOP);
-                getComment(threads);
-            }
-        }.execute();
+        mFlowPresenter.loadData(context, refreshLayout, page, mType);
     }
 
     private void filterEmptyVideo() {
@@ -337,16 +226,15 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
     public void refresh() {
         mPage = 1;
         if (!fetching)
-            getData(mPage);
+            getData(getActivity(), refreshLayout, mPage);
     }
 
     @Override
     public void loadMore() {
         if (!fetching)
-            getData(mPage);
+            getData(getActivity(), refreshLayout, mPage);
     }
 
-    boolean shakeActive = true;
 
     @Override
     public void onShake() {
@@ -358,7 +246,7 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
                     recyclerView.smoothScrollToPosition(0);
                     refresh();
                 }
-            }, 200);
+            }, 100);
         }
     }
 
@@ -389,7 +277,115 @@ public class FlowFragment extends BaseFragment implements LMRecycleView.DataChan
     @Override
     public void onDestroy() {
         super.onDestroy();
+        unregisterShakeListener();
+        mFlowPresenter.detachView();
+    }
+
+    boolean shakeActive = true;
+    ShakeListener shakeListener;
+
+    public void registerShakeListener() {
+        shakeListener = new ShakeListener(getActivity());
+        shakeListener.setOnShakeListener(this);
+    }
+
+    public void unregisterShakeListener() {
         shakeListener.setOnShakeListener(null);
+    }
+
+    @Override
+    public void isLoadingFirst() {
+        EventBus.getDefault().post(View.VISIBLE, EventConfig.SHOW_GLOBAL_PRO_TOP);
+    }
+
+    @Override
+    public void loadFirstFinish() {
+        EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO_TOP);
+    }
+
+    @Override
+    public void isLoadingMore() {
+        EventBus.getDefault().post(View.VISIBLE, EventConfig.SHOW_GLOBAL_PRO);
+    }
+
+    @Override
+    public void loadMoreFinish() {
+        EventBus.getDefault().post(View.INVISIBLE, EventConfig.SHOW_GLOBAL_PRO);
+    }
+
+    @Override
+    public void handleData(String result) throws JSONException {
+        String results = JsonUtils.getString(new JSONObject(result), "comments");
+        tmpList = JSON.parseArray(results, GeneralPostModel.class);
+
+        StringBuilder sb = new StringBuilder();
+        if (tmpList.size() > 0)
+            sb.append("comment-" + tmpList.get(0).getComment_ID());
+
+        for (int i = 1; i < tmpList.size(); i++) {
+            sb.append(",");
+            sb.append("comment-" + tmpList.get(i).getComment_ID());
+        }
+        mFlowPresenter.getComment(getActivity(), sb.toString());
+    }
+
+    @Override
+    public void onDataFailure() {
+        getData(getActivity(), refreshLayout, mPage);
+    }
+
+    @Override
+    public void handleComment(String result) throws JSONException {
+        String results = JsonUtils.getString(new JSONObject(result), "response");
+
+        for (GeneralPostModel model : tmpList) {
+            String threadStr = JsonUtils.getString(new JSONObject(results), "comment-" + model.getComment_ID());
+            CommentThreadModel thread = JSON.parseObject(threadStr, CommentThreadModel.class);
+            model.setThread(thread);
+        }
+
+        if (tmpList.size() > 0) {
+            if (mPage == 1) {
+                filterEmptyVideo();
+                adapter.refreshItems(tmpList, getMore);
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("[");
+                for (GeneralPostModel post : tmpList) {
+                    if (sb.length() > 10)
+                        sb.append(",");
+                    sb.append(JSON.toJSONString(post));
+                }
+                sb.append("]");
+                switch (mType) {
+                    case Config.FUN_PIC:
+                        Prefs.save(Config.PRELOAD_FUN_PIC, sb.toString());
+                        break;
+                    case Config.GIRL_PIC:
+                        Prefs.save(Config.PRELOAD_GIRL_PIC, sb.toString());
+                        break;
+                }
+            } else {
+                filterEmptyVideo();
+                adapter.addMoreItem(tmpList, getMore);
+            }
+            EventBus.getDefault().post(0, EventConfig.PICS_CHANGED);
+            getMore = true;
+        }
+
+        mPage++;
+
+        isFirstIn = false;
+        shakeActive = true;
+        recyclerView.setLoading(false);
+        loadFirstFinish();
+        loadMoreFinish();
+        fetching = false;
+    }
+
+    @Override
+    public void onCommentFailure(String threads) {
+        mFlowPresenter.getComment(getActivity(), threads);
     }
 
 }

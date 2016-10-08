@@ -212,7 +212,6 @@ public class JokeAdapter extends BaseListAdapter<GeneralPostModel> {
 
     private int checkVoted(String post_id) {
         int result = MyApp.voteDAO.getVoted(post_id);
-        Utils.log(TAG, post_id + "===" + result + Utils.getLineNumber(new Exception()));
         return result;
     }
 

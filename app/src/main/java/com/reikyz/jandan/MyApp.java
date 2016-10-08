@@ -47,7 +47,7 @@ public class MyApp extends Application {
     static Stack<Activity> activityStack;
     static Activity currentActivity;
     public static IWXAPI iwxapi;
-    protected static ApiImpl api;
+    public static ApiImpl api;
 
     // DB
     public static VoteDAOImpl voteDAO;
